@@ -4,12 +4,10 @@ config.js
 
 # Node.js / npm
 node_modules/
-package-lock.json
 yarn.lock
 
 # Build & Distribution
 dist/
-build/
 *.exe
 *.msi
 *.dmg

@@ -8,7 +8,7 @@ function createWindow() {
     minWidth: 800,
     minHeight: 600,
     title: 'KZO InspectPro Elite',
-    icon: path.join(__dirname, '..', 'build', 'icon.ico'),
+    icon: path.join(__dirname, '..', 'icon-512.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -26,10 +26,6 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
 });
 
 app.on('window-all-closed', () => {
