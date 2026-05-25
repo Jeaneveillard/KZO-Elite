@@ -1,0 +1,43 @@
+{
+  "name": "kzo-inspectpro-elite",
+  "version": "1.0.0",
+  "description": "KZO InspectPro Elite — Logiciel d'inspection de bâtiment pour Windows",
+  "main": "electron/main.js",
+  "author": "Jean Eveillard Cazeau <kzoinspectpro@gmail.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.kzoinspectpro.elite",
+    "productName": "KZO InspectPro Elite",
+    "copyright": "Copyright © 2026 Jean Eveillard Cazeau",
+    "files": [
+      "**/*",
+      "!node_modules/.cache",
+      "!dist",
+      "!docs",
+      "!*.md"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "icon-512.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "KZO InspectPro Elite"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  }
+}
