@@ -191,7 +191,15 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
 .form-row input{flex:1;padding:6px 10px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:.85rem}
 .add-event-btn{width:100%;background:#2563eb;color:#fff;border:none;padding:8px;border-radius:6px;font-weight:600;cursor:pointer;margin-top:4px}
 .add-event-btn:hover{background:#1d4ed8}
+/* ── Modal Mandat ─────────────────────── */
+#modal-mandat .mhdr{background:#991b1b}
+#modal-mandat .mtitle{color:#fff}
+.mandat-status{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.mandat-status.ms-pending{background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44}
+.mandat-status.ms-sent{background:#3b82f622;color:#3b82f6;border:1px solid #3b82f644}
+.mandat-status.ms-signed{background:#22c55e22;color:#22c55e;border:1px solid #22c55e44}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 <!-- HEADER -->
@@ -1206,6 +1214,15 @@ function renderPageGarde(main) {
     if (el) el.addEventListener('change', () => { pageData['garde'] = pageData['garde']||{}; pageData['garde'][id.replace('g-','')] = el.value; scheduleSave(); });
   });
   renderCoverPreview();
+  // Bouton mandat — section Garde
+  const mandatBtnDiv = document.createElement('div');
+  mandatBtnDiv.style.cssText = 'margin-top:14px;padding:0 14px';
+  const sigs = pageData['signatures'] || {};
+  const mandatBadge = sigs.clientSigned ? 'ms-signed' : (sigs.mandatSent ? 'ms-sent' : 'ms-pending');
+  const mandatLabel = sigs.clientSigned ? '&#10003; Sign&#233;' : (sigs.mandatSent ? '&#128228; Envoy&#233; &#8212; en attente' : '&#9203; Non envoy&#233;');
+  mandatBtnDiv.innerHTML = '<button class="sabtn" id="btn-open-mandat" style="width:100%;background:var(--danger,#dc2626);color:#fff;border-color:var(--danger,#dc2626)">&#128203; Envoyer mandat pour signature <span class="mandat-status ' + mandatBadge + '" style="margin-left:auto">' + mandatLabel + '</span></button>';
+  main.appendChild(mandatBtnDiv);
+  document.getElementById('btn-open-mandat').addEventListener('click', openMandatModal);
 }
 
 async function handleCoverPhoto(file) {
@@ -2586,6 +2603,184 @@ async function sendReportByEmail() {
   }
 }
 
+// ── MANDAT MODAL ──────────────────────────────────────────
+function openMandatModal() {
+  const sigs = pageData['signatures'] || {};
+  const badge = document.getElementById('mandat-status-badge');
+  if (badge) {
+    if (sigs.clientSigned) {
+      badge.className = 'mandat-status ms-signed'; badge.textContent = '✅ Signé';
+    } else if (sigs.mandatSent) {
+      badge.className = 'mandat-status ms-sent'; badge.textContent = '📤 Envoyé — en attente';
+    } else {
+      badge.className = 'mandat-status ms-pending'; badge.textContent = '⏳ Non envoyé';
+    }
+  }
+  const emailInput = document.getElementById('mandat-client-email');
+  if (emailInput) emailInput.value = prop.clientEmail || '';
+  const preview = document.getElementById('sig-import-preview');
+  if (preview) preview.style.display = 'none';
+  openModal('modal-mandat');
+}
+
+function generateMandatPage() {
+  const clientName  = prop.clientName   || '—';
+  const inspName    = prop.inspectorName || 'Jean Eveillard Cazeau';
+  const inspCert    = prop.inspectorCert || 'Inspecteur certifié AIBQ';
+  const firmName    = prop.firmName     || 'KZO InspectPro';
+  const propAddress = prop.propAddress  || '—';
+  const dateInsp    = prop.dateInsp     || new Date().toLocaleDateString('fr-CA');
+  const dossier     = prop.dossier      || 'KZO-' + Date.now().toString().slice(-5);
+  const EMAILJS_SVC = 'service_kzo';
+  const EMAILJS_TPL = 'template_mandat_sig';
+  const EMAILJS_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+
+  return '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mandat — KZO InspectPro</title>' +
+    '<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"><\/script>' +
+    '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:"Segoe UI",sans-serif;background:#f8fafc;color:#1e293b;padding:20px;max-width:640px;margin:0 auto}' +
+    'h1{color:#1a3c5e;font-size:1.4rem;margin-bottom:6px}.sub{color:#64748b;font-size:.9rem;margin-bottom:20px}' +
+    '.box{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:16px}' +
+    '.box h2{font-size:1rem;color:#1a3c5e;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:6px}' +
+    '.box p{font-size:.88rem;color:#475569;line-height:1.6;margin-bottom:8px}' +
+    'canvas{border:2px solid #cbd5e1;border-radius:8px;width:100%;touch-action:none;display:block;background:#fff;margin:10px 0}' +
+    '.btn{width:100%;padding:12px;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:6px}' +
+    '.btn-primary{background:#1a3c5e;color:#fff}.btn-clear{background:#f1f5f9;color:#475569}' +
+    '.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8rem;font-weight:700}' +
+    '.badge-ok{background:#dcfce7;color:#166534}.badge-err{background:#fee2e2;color:#991b1b}' +
+    '#status{text-align:center;margin-top:12px;font-weight:600;font-size:.95rem}</style></head><body>' +
+    '<h1>&#128203; Mandat d\'inspection préachat</h1>' +
+    '<p class="sub">Dossier ' + dossier + ' — Veuillez lire et signer avant l\'inspection</p>' +
+    '<div class="box"><h2>Parties</h2>' +
+    '<p><strong>Client :</strong> ' + clientName + '</p>' +
+    '<p><strong>Propriété :</strong> ' + propAddress + '</p>' +
+    '<p><strong>Date inspection :</strong> ' + dateInsp + '</p>' +
+    '<p><strong>Inspecteur :</strong> ' + inspName + ' — ' + inspCert + ' — ' + firmName + '</p></div>' +
+    '<div class="box"><h2>Norme de pratique — Résumé</h2>' +
+    '<p>L\'inspection préachat est une évaluation <strong>visuelle, objective et non invasive</strong> des composantes accessibles du bâtiment, réalisée selon le REIBH 2024 et la norme BNQ 3009-500.</p>' +
+    '<p>La responsabilité de l\'inspecteur est limitée aux honoraires d\'inspection en cas de faute dans l\'évaluation visuelle. Les vices cachés et composantes non accessibles sont exclus.</p>' +
+    '<p>Le rapport est confidentiel et destiné exclusivement au client identifié.</p></div>' +
+    '<div class="box"><h2>Signature du client</h2>' +
+    '<p>En signant ci-dessous, vous confirmez avoir lu et accepté les termes du présent mandat.</p>' +
+    '<canvas id="sigCanvas" height="180"></canvas>' +
+    '<button class="btn btn-clear" onclick="clearSig()">&#8635; Effacer</button>' +
+    '<button class="btn btn-primary" onclick="submitSig()" style="margin-top:8px">&#10003; Soumettre ma signature</button>' +
+    '<div id="status"></div></div>' +
+    '<script>' +
+    'const canvas=document.getElementById("sigCanvas");canvas.width=canvas.offsetWidth;' +
+    'const ctx=canvas.getContext("2d");let drawing=false;' +
+    'function getPos(e){const r=canvas.getBoundingClientRect();const src=e.touches?e.touches[0]:e;return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)};}' +
+    'canvas.addEventListener("mousedown",e=>{drawing=true;ctx.beginPath();const p=getPos(e);ctx.moveTo(p.x,p.y)});' +
+    'canvas.addEventListener("mousemove",e=>{if(!drawing)return;ctx.strokeStyle="#1e293b";ctx.lineWidth=2.5;ctx.lineCap="round";const p=getPos(e);ctx.lineTo(p.x,p.y);ctx.stroke()});' +
+    'canvas.addEventListener("mouseup",()=>drawing=false);' +
+    'canvas.addEventListener("mouseleave",()=>drawing=false);' +
+    'canvas.addEventListener("touchstart",e=>{e.preventDefault();drawing=true;ctx.beginPath();const p=getPos(e);ctx.moveTo(p.x,p.y)},{passive:false});' +
+    'canvas.addEventListener("touchmove",e=>{e.preventDefault();if(!drawing)return;ctx.strokeStyle="#1e293b";ctx.lineWidth=2.5;ctx.lineCap="round";const p=getPos(e);ctx.lineTo(p.x,p.y);ctx.stroke()},{passive:false});' +
+    'canvas.addEventListener("touchend",()=>drawing=false);' +
+    'function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);}' +
+    'function isEmpty(){const d=ctx.getImageData(0,0,canvas.width,canvas.height).data;for(let i=3;i<d.length;i+=4)if(d[i]>0)return false;return true;}' +
+    'async function submitSig(){' +
+    'if(isEmpty()){document.getElementById("status").innerHTML=\'<span class="badge badge-err">Veuillez signer avant de soumettre</span>\';return;}' +
+    'document.getElementById("status").textContent="Envoi en cours...";' +
+    'const sigData=canvas.toDataURL("image/png");' +
+    'try{emailjs.init("' + EMAILJS_KEY + '");' +
+    'await emailjs.send("' + EMAILJS_SVC + '","' + EMAILJS_TPL + '",{' +
+    'dossier:"' + dossier + '",client:"' + clientName + '",address:"' + propAddress + '",' +
+    'date_inspection:"' + dateInsp + '",signature_data:sigData,signed_at:new Date().toLocaleString("fr-CA")});' +
+    'document.getElementById("status").innerHTML=\'<span class="badge badge-ok">✅ Signature envoyée — merci!</span>\';' +
+    'document.querySelectorAll("button").forEach(b=>b.disabled=true);' +
+    '}catch(e){document.getElementById("status").innerHTML=\'<span class="badge badge-err">Erreur: \'+e.text+\'</span>\';}}' +
+    '<\/script></body></html>';
+}
+
+async function sendMandatByEmail() {
+  const clientEmail = (document.getElementById('mandat-client-email') || {}).value
+    ? document.getElementById('mandat-client-email').value.trim()
+    : (prop.clientEmail || '');
+  if (!clientEmail) { toast('Courriel du client requis', 'er'); return; }
+  if (!driveToken) { const ok = await connectDrive(); if (!ok) return; }
+
+  toast('Génération du mandat...', 'inf', 30000);
+  const mandatHtml = generateMandatPage();
+  const mandatBlob = new Blob([mandatHtml], {type:'text/html;charset=utf-8'});
+  const mandatName = 'mandat-kzo-' + (prop.dossier || 'inspection') + '.html';
+
+  try {
+    const meta = new Blob([JSON.stringify({name:mandatName,mimeType:'text/html',parents:[]})], {type:'application/json'});
+    const form = new FormData();
+    form.append('metadata', meta);
+    form.append('file', mandatBlob);
+    const uploadRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method:'POST', headers:{Authorization:'Bearer '+driveToken}, body:form
+    });
+    if (!uploadRes.ok) throw new Error('Drive upload ' + uploadRes.status);
+    const fileData = await uploadRes.json();
+    const fileId = fileData.id;
+
+    await fetch('https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions', {
+      method:'POST',
+      headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},
+      body:JSON.stringify({role:'reader',type:'anyone'})
+    });
+    const mandatLink = 'https://drive.google.com/file/d/' + fileId + '/view';
+
+    const subject = 'Veuillez signer votre mandat d\'inspection — ' + (prop.propAddress || 'KZO');
+    const body = (prop.clientName || 'Madame, Monsieur') + ',\n\nVeuillez signer le mandat d\'inspection avant notre rendez-vous :\n\n' + mandatLink + '\n\nCela ne prend que 30 secondes sur votre téléphone.\n\nCordialement,\n' + (prop.inspectorName || 'Jean Eveillard Cazeau') + '\n' + (prop.firmName || 'KZO InspectPro');
+    const rawEmail = [
+      'To: ' + clientEmail,
+      'Subject: =?UTF-8?B?' + btoa(unescape(encodeURIComponent(subject))) + '?=',
+      'MIME-Version: 1.0',
+      'Content-Type: text/plain; charset=UTF-8',
+      '',
+      body
+    ].join('\r\n');
+    const encoded = btoa(unescape(encodeURIComponent(rawEmail))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    const gmailRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method:'POST',
+      headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},
+      body:JSON.stringify({raw:encoded})
+    });
+    if (!gmailRes.ok) throw new Error('Gmail ' + gmailRes.status);
+
+    if (!pageData['signatures']) pageData['signatures'] = {};
+    pageData['signatures'].mandatSent = true;
+    pageData['signatures'].mandatSentAt = new Date().toISOString();
+    pageData['signatures'].mandatEmail = clientEmail;
+    pageData['signatures'].mandatFileId = fileId;
+    saveToStorage();
+
+    toast('✅ Mandat envoyé à ' + clientEmail, 'ok', 6000);
+    closeModal('modal-mandat');
+  } catch(e) {
+    const blobUrl = URL.createObjectURL(mandatBlob);
+    window.open(blobUrl);
+    toast('Drive/Gmail indisponible — mandat ouvert localement. Enregistrez et envoyez manuellement.', 'warn', 7000);
+  }
+}
+
+function importSignaturePng(file) {
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const dataUrl = ev.target.result;
+    const img = document.getElementById('sig-import-img');
+    if (img) img.src = dataUrl;
+    const preview = document.getElementById('sig-import-preview');
+    if (preview) preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function confirmImportedSignature() {
+  const img = document.getElementById('sig-import-img');
+  if (!img || !img.src || img.src === window.location.href) { toast('Aucune signature à confirmer', 'er'); return; }
+  if (!pageData['signatures']) pageData['signatures'] = {};
+  pageData['signatures'].client = img.src;
+  pageData['signatures'].clientSigned = true;
+  pageData['signatures'].date = new Date().toISOString();
+  saveToStorage();
+  toast('✅ Signature importée et enregistrée dans le dossier', 'ok', 5000);
+  closeModal('modal-mandat');
+}
+
 // ── SETTINGS MODAL ────────────────────────────────────────
 function applyProviderDefaults(providerKey) {
   const pr = PROVIDERS[providerKey];
@@ -3327,6 +3522,16 @@ document.getElementById('agendaModal').addEventListener('click', (e) => {
     e.target.value = '';
   });
 
+  // Mandat modal buttons
+  document.getElementById('btn-send-mandat').addEventListener('click', sendMandatByEmail);
+  document.getElementById('btn-import-sig').addEventListener('click', () => {
+    document.getElementById('import-sig-input').click();
+  });
+  document.getElementById('import-sig-input').addEventListener('change', (e) => {
+    if (e.target.files[0]) importSignaturePng(e.target.files[0]);
+  });
+  document.getElementById('btn-confirm-sig').addEventListener('click', confirmImportedSignature);
+
   // Close modals
   document.querySelectorAll('[data-close]').forEach(btn => {
     btn.addEventListener('click', () => closeModal(btn.dataset.close));
@@ -3605,6 +3810,31 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <button class="add-event-btn" onclick="agendaSaveEvent()">Ajouter le RDV</button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ── MODAL MANDAT AVANT INSPECTION ─────────────────── -->
+<div class="modal-ov" id="modal-mandat">
+  <div class="modal" style="max-width:520px">
+    <div class="mhdr"><span class="mtitle">&#128203; Mandat d'inspection — Signature client</span><button class="mclose" data-close="modal-mandat">&#10005;</button></div>
+    <div class="mbody" style="padding:20px;display:flex;flex-direction:column;gap:14px">
+      <div id="mandat-status-block">
+        <span class="mandat-status ms-pending" id="mandat-status-badge">&#9899; Non envoy&#233;</span>
+      </div>
+      <p style="font-size:13px;color:var(--muted)">Le mandat sera g&#233;n&#233;r&#233;, sauvegard&#233; sur Google Drive et le lien envoy&#233; au client par courriel. Le client signe sur son t&#233;l&#233;phone avant votre arriv&#233;e.</p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <label style="font-size:12px;color:var(--muted)">Courriel du client</label>
+        <input id="mandat-client-email" type="email" class="finput" placeholder="client@email.com" style="width:100%">
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-p" id="btn-send-mandat" style="flex:1">&#9993; G&#233;n&#233;rer et envoyer</button>
+        <button class="btn" id="btn-import-sig" style="flex:1">&#128229; Importer signature PNG</button>
+      </div>
+      <input type="file" id="import-sig-input" accept="image/png,image/jpeg" style="display:none">
+      <div id="sig-import-preview" style="display:none;text-align:center">
+        <img id="sig-import-img" style="max-width:260px;max-height:80px;border:1px solid var(--border);border-radius:4px">
+        <div style="margin-top:8px"><button class="btn btn-p" id="btn-confirm-sig">&#10003; Confirmer cette signature</button></div>
       </div>
     </div>
   </div>
