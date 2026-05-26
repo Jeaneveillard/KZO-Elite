@@ -978,8 +978,12 @@ function scheduleDriveSync() {
   showDriveInd('pending');
   clearTimeout(driveAutoSaveTimer);
   driveAutoSaveTimer = setTimeout(async () => {
-    await saveToDrive();
-    showDriveInd('ok');
+    try {
+      await saveToDrive();
+      showDriveInd('ok');
+    } catch (e) {
+      showDriveInd('off');
+    }
   }, 30000);
 }
 
@@ -2442,7 +2446,6 @@ async function saveToDrive() {
     } else {
       await fetch(url, {method, headers:{Authorization:'Bearer '+driveToken, 'Content-Type':'application/json'}, body:blob});
     }
-    saveToStorage();
     toast('Sauvegardé sur Google Drive', 'ok');
   } catch(e) {
     toast('Erreur Drive: ' + e.message, 'er');
@@ -3149,7 +3152,8 @@ function bindEvents() {
       showDriveInd('off');
       toast('Drive déconnecté', 'inf');
     } else {
-      await connectDrive();
+      try { await connectDrive(); }
+      catch (e) { toast('Erreur connexion Drive: ' + e.message, 'er'); }
     }
   });
 
