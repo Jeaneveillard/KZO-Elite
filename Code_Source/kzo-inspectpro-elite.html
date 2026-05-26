@@ -3168,22 +3168,20 @@ function bindEvents() {
   document.getElementById('btn-file-menu').addEventListener('click', openFileMenu);
   document.getElementById('btn-agenda').addEventListener('click', () => {
   if (typeof openAgendaModal === 'function') {
-    if (currentProjectId && prop.clientName) {
-      setTimeout(() => {
-        const evClient = document.getElementById('evClient');
-        const evAddress = document.getElementById('evAddress');
-        if (evClient && !evClient.value) evClient.value = prop.clientName || '';
-        if (evAddress && !evAddress.value) evAddress.value = prop.propAddress || '';
-      }, 100);
-    }
     openAgendaModal();
+    if (currentProjectId && prop.clientName) {
+      const evClient = document.getElementById('evClient');
+      const evAddress = document.getElementById('evAddress');
+      if (evClient && !evClient.value) evClient.value = prop.clientName || '';
+      if (evAddress && !evAddress.value) evAddress.value = prop.propAddress || '';
+    }
   } else {
     toast('Module agenda non chargé', 'er');
   }
 });
 
 document.getElementById('agendaModal').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('agendaModal')) closeAgendaModal();
+  if (e.target === document.getElementById('agendaModal') && typeof closeAgendaModal === 'function') closeAgendaModal();
 });
   document.getElementById('btn-settings').addEventListener('click', openSettings);
   document.getElementById('btn-profile').addEventListener('click', openProfile);
