@@ -1748,7 +1748,8 @@ function appendChatMsg(role, text) {
 
 // ── PDF REPORT ────────────────────────────────────────────
 async function exportPDF(mode = 'print') {
-  toast('Génération du rapport en cours...', 'inf', 5000);
+  if (mode !== '_build_only') toast('Génération du rapport en cours...', 'inf', 5000);
+  window._lastReportHtml = null;
   const s = getSettings();
   const ff = s.fontFamily || 'Arial,Helvetica,sans-serif';
   const fs = s.fontSize || '11pt';
