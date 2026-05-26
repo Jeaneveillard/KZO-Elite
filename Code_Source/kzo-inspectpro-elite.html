@@ -2620,6 +2620,8 @@ function openMandatModal() {
   if (emailInput) emailInput.value = prop.clientEmail || '';
   const preview = document.getElementById('sig-import-preview');
   if (preview) preview.style.display = 'none';
+  const sigImg = document.getElementById('sig-import-img');
+  if (sigImg) sigImg.src = '';
   openModal('modal-mandat');
 }
 
@@ -2682,7 +2684,7 @@ function generateMandatPage() {
     'if(isEmpty()){document.getElementById("status").innerHTML=\'<span class="badge badge-err">Veuillez signer avant de soumettre</span>\';return;}' +
     'document.getElementById("status").textContent="Envoi en cours...";' +
     'const sigData=canvas.toDataURL("image/png");' +
-    'try{emailjs.init("' + EMAILJS_KEY + '");' +
+    'try{if("' + EMAILJS_KEY + '"==="YOUR_EMAILJS_PUBLIC_KEY"){document.getElementById("status").innerHTML=\'<span class="badge badge-err">EmailJS non configuré — contactez votre inspecteur</span>\';return;}emailjs.init("' + EMAILJS_KEY + '");' +
     'await emailjs.send("' + EMAILJS_SVC + '","' + EMAILJS_TPL + '",{' +
     'dossier:"' + dossier + '",client:"' + clientName + '",address:"' + propAddress + '",' +
     'date_inspection:"' + dateInsp + '",signature_data:sigData,signed_at:new Date().toLocaleString("fr-CA")});' +
@@ -2716,11 +2718,12 @@ async function sendMandatByEmail() {
     const fileData = await uploadRes.json();
     const fileId = fileData.id;
 
-    await fetch('https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions', {
+    const permRes = await fetch('https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions', {
       method:'POST',
       headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},
       body:JSON.stringify({role:'reader',type:'anyone'})
     });
+    if (!permRes.ok) throw new Error('Drive permissions ' + permRes.status);
     const mandatLink = 'https://drive.google.com/file/d/' + fileId + '/view';
 
     const subject = 'Veuillez signer votre mandat d\'inspection — ' + (prop.propAddress || 'KZO');
@@ -2771,7 +2774,7 @@ function importSignaturePng(file) {
 
 function confirmImportedSignature() {
   const img = document.getElementById('sig-import-img');
-  if (!img || !img.src || img.src === window.location.href) { toast('Aucune signature à confirmer', 'er'); return; }
+  if (!img || !img.src || !img.src.startsWith('data:image/')) { toast('Aucune signature à confirmer', 'er'); return; }
   if (!pageData['signatures']) pageData['signatures'] = {};
   pageData['signatures'].client = img.src;
   pageData['signatures'].clientSigned = true;
