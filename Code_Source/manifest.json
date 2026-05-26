@@ -1,0 +1,32 @@
+{
+  "name": "KZO InspectPro Elite",
+  "short_name": "KZO Elite",
+  "description": "Application professionnelle d'inspection de bâtiments — REIBH 2024 / BNQ 3009-500",
+  "start_url": "./kzo-inspectpro-elite.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f1117",
+  "theme_color": "#0f1117",
+  "categories": ["business", "productivity"],
+  "lang": "fr-CA",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%230f1117'/><text x='256' y='340' font-size='260' font-weight='900' font-family='system-ui' fill='%234f7cff' text-anchor='middle'>K</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='30' fill='%230f1117'/><text x='96' y='130' font-size='100' font-weight='900' font-family='system-ui' fill='%234f7cff' text-anchor='middle'>K</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%234f7cff'/><text x='256' y='340' font-size='260' font-weight='900' font-family='system-ui' fill='white' text-anchor='middle'>K</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

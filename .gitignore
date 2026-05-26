@@ -1,55 +1,11 @@
-# Données sensibles
-config.js
-.env
-
-# Node.js / npm
 node_modules/
-yarn.lock
-
-# Build & Distribution
 dist/
-*.exe
-*.msi
-*.dmg
-*.zip
-out/
-
-# Cache navigateur / PWA
-*.cache
-sw.js.map
-
-# Système
-.DS_Store
-Thumbs.db
-desktop.ini
-.antigravityignore
-
-# Éditeurs
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs
+.claude/
+logo_b64.txt
+build/icon_source.png
+build/make-icns.js
+temp.js
+server.js
+docs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Sauvegardes temporaires
-*.bak
-*.tmp
-*.fixed
-
-# Doublon HTML (copie avec fins de ligne différentes)
-KZO_insp.html
-
-# Raccourcis Windows (personnels, contiennent le chemin local)
-*.url
-*.lnk
-
-# Claude Code — fichiers de travail internes
-.claude/worktrees/
-.claude/settings.local.json
-.claude/todo.json
-.superpowers/
+{if*

@@ -1,9 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>KZO InspectPro Elite</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KZO Elite">
+<meta name="description" content="Application professionnelle d'inspection de bâtiments — REIBH 2024 / BNQ 3009-500">
 <style>
 :root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3350;--text:#e8eaf6;--muted:#8891b4;--accent:#4f7cff;--accent2:#6b93ff;--ok:#22c55e;--warn:#f59e0b;--danger:#ef4444;--sw:280px;--hh:60px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -23,7 +29,7 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(
 #layout{display:flex;position:fixed;top:var(--hh);bottom:0;left:0;right:0}
 #sidebar{width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
 .stitle{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:11px 14px 4px}
-.snav{flex:1;overflow-y:auto;padding-bottom:6px}
+.snav{flex:1;min-height:0;overflow-y:auto;padding-bottom:6px}
 .snav::-webkit-scrollbar{width:3px}.snav::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 .nav-item{display:flex;align-items:center;gap:9px;padding:7px 14px;cursor:pointer;font-size:13px;border-left:3px solid transparent;transition:background .12s;user-select:none}
 .nav-item:hover{background:var(--surface2)}.nav-item.active{background:rgba(79,124,255,.12);border-left-color:var(--accent);color:var(--accent)}
@@ -93,7 +99,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
 .modal.wide{max-width:840px}
 .mhdr{display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--border)}
 .mtitle{flex:1;font-size:15px;font-weight:700}.mclose{background:none;border:none;color:var(--muted);font-size:19px;cursor:pointer;padding:0 3px}.mclose:hover{color:var(--text)}
-.mbody{flex:1;overflow-y:auto;padding:18px}.mfooter{padding:11px 18px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end}
+.mbody{flex:1;min-height:0;overflow-y:auto;padding:18px}.mfooter{padding:11px 18px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end}
 .btn{padding:7px 15px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-size:13px;background:var(--surface2);color:var(--text);transition:background .15s}.btn:hover{background:var(--border)}
 .btn-p{background:var(--accent);border-color:var(--accent);color:#fff}.btn-p:hover{background:var(--accent2)}.btn-d{background:var(--danger);border-color:var(--danger);color:#fff}
 .ss{margin-bottom:18px}.ss-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)}
@@ -198,13 +204,39 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
 .mandat-status.ms-pending{background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44}
 .mandat-status.ms-sent{background:#3b82f622;color:#3b82f6;border:1px solid #3b82f644}
 .mandat-status.ms-signed{background:#22c55e22;color:#22c55e;border:1px solid #22c55e44}
+/* ── INVOICE TEMPLATE ── */
+#invoice-template { display:none; background:#fff; color:#000; padding:40px; font-family:Arial, sans-serif; }
+#invoice-template.print-mode { display:block; position:absolute; top:0; left:0; width:800px; z-index:9999; }
+.inv-header { display:flex; justify-content:space-between; border-bottom:2px solid #1a3c5e; padding-bottom:15px; margin-bottom:20px; }
+.inv-logo img { max-height:80px; }
+.inv-title { font-size:28px; color:#1a3c5e; font-weight:bold; }
+.inv-info { display:flex; justify-content:space-between; margin-bottom:30px; font-size:14px; }
+.inv-table { width:100%; border-collapse:collapse; margin-bottom:30px; font-size:14px; }
+.inv-table th, .inv-table td { border:1px solid #ddd; padding:10px; text-align:left; }
+.inv-table th { background:#f5f5f5; color:#333; }
+.inv-totals { width:300px; float:right; border-top:2px solid #333; padding-top:10px; margin-bottom:30px; }
+.inv-totals-row { display:flex; justify-content:space-between; margin-bottom:5px; font-size:14px; }
+.inv-totals-row.bold { font-weight:bold; font-size:16px; }
+
+/* ── TABLET / MOBILE ── */
+.hmenu-btn { display:none; background:none; border:none; color:var(--text); font-size:24px; cursor:pointer; padding-right:10px; }
+@media(max-width:800px){
+  .hmenu-btn { display:block; }
+  #sidebar { position:fixed; top:var(--hh); left:calc(-1 * var(--sw)); bottom:0; z-index:90; transition:left 0.3s ease; box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
+  #sidebar.open { left:0; }
+  .hlogo span { display:none; }
+  #layout { padding-left:0; }
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 <body>
 <!-- HEADER -->
 <header id="app-header">
-  <div class="hlogo" id="btn-home">KZO <span>InspectPro Elite</span></div>
+  <button class="hmenu-btn" id="btn-menu">&#9776;</button>
+  <div class="hlogo" id="btn-home"><img id="hlogo-img" alt="KZO" style="height:35px; vertical-align:middle; margin-right:10px; border-radius:4px; display:inline-block;"> KZO <span>InspectPro Elite</span></div>
   <button class="hbtn" id="btn-file-menu">&#128193; Fichier &#9660;</button>
   <span id="proj-chip" style="display:none" title="Retour au tableau de bord">&#128193; </span>
   <div class="hsp"></div>
@@ -215,7 +247,10 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
   <button class="hbtn" id="btn-profile">&#128196; Inspection</button>
   <button class="hbtn" id="btn-preview">&#128065; Aperçu rapport</button>
   <button class="hbtn" id="btn-export-menu">&#8595; Exporter</button>
+  <button class="hbtn" id="btn-facture">&#128181; Facture PDF</button>
+  <button class="hbtn" id="btn-email-invoice" style="background:linear-gradient(135deg,#059669,#0d9488);border-color:#059669;color:#fff">&#9993; Envoyer facture</button>
   <button class="hbtn primary" id="btn-report">&#128438; Imprimer PDF</button>
+  <button class="hbtn" id="pwa-install-btn" onclick="pwaInstall()" style="display:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-color:#6366f1;color:#fff">&#128242; Installer l'app</button>
 </header>
 
 <!-- LAYOUT -->
@@ -235,6 +270,63 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
 
   <!-- MAIN -->
   <main id="main"></main>
+</div>
+
+<!-- INVOICE TEMPLATE -->
+<div id="invoice-template">
+  <div class="inv-header">
+    <div class="inv-logo"><img src="" id="inv-logo-img" alt="Logo"></div>
+    <div class="inv-title">FACTURE</div>
+  </div>
+  <div class="inv-info">
+    <div>
+      <strong id="inv-firm-name"></strong><br>
+      <span id="inv-firm-address"></span><br>
+      <span id="inv-firm-phone"></span><br>
+      <span id="inv-firm-email"></span><br><br>
+      <strong>TPS:</strong> <span id="inv-tps-no"></span><br>
+      <strong>TVQ:</strong> <span id="inv-tvq-no"></span>
+    </div>
+    <div style="text-align:right">
+      <strong>Facture No:</strong> <span id="inv-no"></span><br>
+      <strong>Date:</strong> <span id="inv-date"></span><br><br>
+      <strong>Facturé à:</strong><br>
+      <span id="inv-client-name"></span><br>
+      <span id="inv-client-address"></span>
+    </div>
+  </div>
+  <table class="inv-table">
+    <thead><tr><th>Description</th><th style="text-align:right">Montant</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Service d'inspection de bâtiment préachat<br><small id="inv-prop-address"></small></td>
+        <td style="text-align:right">$<span id="inv-amount"></span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="inv-totals">
+    <div class="inv-totals-row"><span>Sous-total :</span> <span>$<span id="inv-subtotal"></span></span></div>
+    <div class="inv-totals-row"><span>TPS (5%) :</span> <span>$<span id="inv-tps-amt"></span></span></div>
+    <div class="inv-totals-row"><span>TVQ (9.975%) :</span> <span>$<span id="inv-tvq-amt"></span></span></div>
+    <div class="inv-totals-row bold"><span>Total :</span> <span>$<span id="inv-total"></span></span></div>
+  </div>
+  <div id="inv-payment-section" style="margin-top:20pt;border-top:2pt solid #333;padding-top:14pt">
+    <div style="font-weight:700;font-size:11pt;margin-bottom:8pt">Modalités de paiement</div>
+    <div style="display:flex;gap:20pt;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1;min-width:200pt">
+        <div style="font-size:9pt;line-height:1.6;color:#444">
+          <strong>Virement Interac :</strong> <span id="inv-interac-email">kzoinspectpro@gmail.com</span><br>
+          <strong>Chèque :</strong> À l'ordre de <span id="inv-cheque-name">KZO InspectPro</span><br>
+          <strong>Paiement en ligne :</strong> Scannez le code QR →<br>
+          <span style="font-size:8pt;color:#888">Payable à la réception du rapport. Frais de retard: 2%/mois.</span>
+        </div>
+      </div>
+      <div id="inv-qr-container" style="text-align:center">
+        <canvas id="inv-qr-canvas" style="width:80pt;height:80pt"></canvas>
+        <div style="font-size:7pt;color:#888;margin-top:3pt">Payer en ligne</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- PHOTO VIEWER -->
@@ -282,6 +374,13 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
         </div>
         <div class="fg"><label class="fl">Couleur d'accent rapport</label><input type="color" id="s-accent-color" value="#1a3c5e"></div>
       </div>
+      <div class="ss"><div class="ss-title">Facturation</div>
+        <div class="fg"><label class="fl">No TPS (RT0001)</label><input type="text" id="s-tps-no" placeholder="XXXXXXXXX RT0001"></div>
+        <div class="fg"><label class="fl">No TVQ (TQ0001)</label><input type="text" id="s-tvq-no" placeholder="XXXXXXXXX TQ0001"></div>
+        <div class="fg"><label class="fl">Adresse / ville entreprise</label><input type="text" id="s-firm-address" placeholder="123 rue Exemple, Terrebonne, QC  J6Y 0A1"></div>
+        <div class="fg"><label class="fl">Lien Stripe Payment (paiement en ligne)</label><input type="url" id="s-stripe-link" placeholder="https://buy.stripe.com/votre-lien"></div>
+        <div class="fg"><label class="fl">Courriel Interac (virement)</label><input type="email" id="s-interac-email" placeholder="kzoinspectpro@gmail.com"></div>
+      </div>
       <div class="ss"><div class="ss-title">Données</div>
         <div class="fg"><label class="fl">Exporter toutes les données (JSON)</label><button class="btn" id="btn-export-json">&#8681; Exporter</button></div>
         <div class="fg"><label class="fl">Importer données (JSON)</label><button class="btn" id="btn-import-json">&#8679; Importer</button></div>
@@ -300,8 +399,27 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
       <div class="ss"><div class="ss-title">Inspecteur</div>
         <div class="g2">
           <div class="fg"><label class="fl">Nom complet</label><input type="text" id="p-inspector-name" placeholder="Jean Eveillard Cazeau"></div>
-          <div class="fg"><label class="fl">Titre / certification</label><input type="text" id="p-inspector-title" placeholder="Inspecteur certifié AIBQ"></div>
-          <div class="fg"><label class="fl">No certification</label><input type="text" id="p-inspector-cert" placeholder="AIBQ-XXXX"></div>
+          <div class="fg"><label class="fl">Association / certification</label>
+            <select id="p-inspector-assoc">
+              <optgroup label="── Québec ──">
+                <option value="AIBQ">AIBQ — Association des Inspecteurs en Bâtiments du Québec</option>
+                <option value="AIIAQ">AIIAQ — Association des Inspecteurs Immobiliers Agréés du Québec</option>
+                <option value="IBC">IBC — Inspecteurs en Bâtiments Certifiés du Québec</option>
+                <option value="OIQ">OIQ — Ordre des Ingénieurs du Québec</option>
+                <option value="OAQ">OAQ — Ordre des Architectes du Québec</option>
+                <option value="OTPQ">OTPQ — Ordre des Technologues Professionnels du Québec</option>
+              </optgroup>
+              <optgroup label="── International ──">
+                <option value="InterNACHI">InterNACHI — Int. Assoc. of Certified Home Inspectors</option>
+              </optgroup>
+              <optgroup label="──────────────">
+                <option value="Autre">Autre / Indépendant</option>
+              </optgroup>
+            </select>
+            <div id="assoc-info-badge" style="display:none;margin-top:5px;padding:5px 8px;border-radius:4px;font-size:11px;background:var(--surface2);border-left:3px solid var(--accent);color:var(--muted);line-height:1.4"></div>
+          </div>
+          <div class="fg"><label class="fl">Titre professionnel</label><input type="text" id="p-inspector-title" placeholder="Inspecteur certifié AIBQ"></div>
+          <div class="fg"><label class="fl" id="lbl-cert-no">No de certification</label><input type="text" id="p-inspector-cert" placeholder="AIBQ-XXXX"></div>
           <div class="fg"><label class="fl">No RBQ</label><input type="text" id="p-inspector-rbq" placeholder=""></div>
           <div class="fg"><label class="fl">Téléphone</label><input type="tel" id="p-inspector-phone" placeholder="514-xxx-xxxx"></div>
           <div class="fg"><label class="fl">Courriel</label><input type="email" id="p-inspector-email" placeholder="kzoinspectpro@gmail.com"></div>
@@ -445,7 +563,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
         <div class="fg"><label class="fl">Date d'inspection</label><input type="date" id="np-date"></div>
       </div>
       <div class="fg"><label class="fl">Nom du client</label><input type="text" id="np-client" placeholder="Prénom Nom"></div>
-      <div class="fg"><label class="fl">Honoraires ($, avant taxes)</label><input type="number" id="np-fee" placeholder="500" value="500" step="25"></div>
+      <div class="fg"><label class="fl">Honoraires ($, avant taxes)</label><input type="number" id="np-fee" placeholder="ex: 450" step="25"></div>
     </div>
     <div class="mfooter">
       <button class="btn" data-close="modal-new-proj">Annuler</button>
@@ -674,7 +792,12 @@ const BNQ = {
     ]},
   ],
   electricite:[
-    {id:'el_pan', icon:'⚡', label:'Panneau électrique', open:true, fields:[
+    {id:'el_entree', icon:'🔌', label:'Entrée électrique', open:true, fields:[
+      {id:'elec_entree_type', label:'Rentrée du courant', type:'select', options:['Aérienne', 'Souterraine', 'Inconnu']},
+      {id:'elec_entree_loc',  label:'Passage de la ligne', type:'select', options:['Passe à l\'avant', 'Passe à l\'arrière', 'Passe sur le côté', 'Inconnu / Non applicable']},
+      {id:'elec_entree_etat', label:'État du mât / Branchement', type:'status'}
+    ]},
+    {id:'el_pan', icon:'⚡', label:'Panneau électrique', open:false, fields:[
       {id:'elec_amp',   label:'Capacité (ampères)', type:'select', options:['60A','100A','125A','150A','200A','200A+','Inconnu']},
       {id:'elec_marque',label:'Marque / fabricant', type:'select', options:['Square D','Siemens','Eaton / Cutler-Hammer','Federal Pacific (Stab-Lok)','Zinsco','Murray','GE','Autre']},
       {id:'elec_type',  label:'Type',               type:'select', options:['Disjoncteurs','Fusibles','Mixte']},
@@ -686,7 +809,8 @@ const BNQ = {
       {id:'elec_alu',     label:'Câblage aluminium détecté', type:'checkbox', note:'Vérifier connexions certifiées Al/Cu'},
       {id:'elec_knob',    label:'Knob & tube visible',       type:'checkbox'},
       {id:'elec_masse',   label:'Mise à la masse visible',   type:'status'},
-      {id:'elec_terre',   label:'Mise à la terre',           type:'status'},
+      {id:'elec_terre_vis', label:'Prise à la terre',        type:'select', options:['Visible', 'Non visible', 'Inconnu']},
+      {id:'elec_terre',   label:'État de la mise à la terre',type:'status'},
       {id:'elec_decouvr', label:'Câblage apparent / non protégé', type:'checkbox'},
     ]},
     {id:'el_prises', icon:'🔋', label:'Prises et interrupteurs', open:false, fields:[
@@ -857,7 +981,7 @@ let confirmCallback = null;
 // ── INDEXEDDB v2 ──────────────────────────────────────────
 function initIDB() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('kzo_elite_photos', 2);
+    const req = indexedDB.open('kzo_elite_photos', 3);
     req.onupgradeneeded = e => {
       const db = e.target.result;
       const old = e.oldVersion;
@@ -866,7 +990,6 @@ function initIDB() {
         store.createIndex('sectionId','sectionId',{unique:false});
       }
       if (old < 2) {
-        // Ajouter index projectId et index composé [projectId, sectionId]
         const store = e.target.transaction.objectStore('photos');
         if (!store.indexNames.contains('projectId')) {
           store.createIndex('projectId','projectId',{unique:false});
@@ -874,6 +997,10 @@ function initIDB() {
         if (!store.indexNames.contains('projSec')) {
           store.createIndex('projSec',['projectId','sectionId'],{unique:false});
         }
+      }
+      if (old < 3) {
+        const bs = db.createObjectStore('blobs', { keyPath: 'id' });
+        bs.createIndex('projectId', 'projectId', { unique: false });
       }
     };
     req.onsuccess = e => { idb = e.target.result; resolve(); };
@@ -943,6 +1070,42 @@ async function idbClearAll() {
   });
 }
 
+// ── IDB BLOBS : coverPhoto + signatures ───────────────────
+async function idbSaveBlob(key, data) {
+  const pid = currentProjectId || 'default';
+  return new Promise((resolve, reject) => {
+    const tx = idb.transaction('blobs','readwrite');
+    tx.objectStore('blobs').put({ id: pid + ':' + key, projectId: pid, key, data });
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function idbGetBlob(key) {
+  const pid = currentProjectId || 'default';
+  return new Promise((resolve, reject) => {
+    const tx = idb.transaction('blobs','readonly');
+    const req = tx.objectStore('blobs').get(pid + ':' + key);
+    req.onsuccess = () => resolve(req.result ? req.result.data : null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbDeleteProjectBlobs(projId) {
+  const pid = projId || currentProjectId || 'default';
+  return new Promise((resolve, reject) => {
+    const tx = idb.transaction('blobs','readwrite');
+    const idx = tx.objectStore('blobs').index('projectId');
+    const req = idx.openCursor(IDBKeyRange.only(pid));
+    req.onsuccess = e => {
+      const cursor = e.target.result;
+      if (cursor) { cursor.delete(); cursor.continue(); }
+    };
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
 // ── STORAGE ────────────────────────────────────────────────
 // Données scopées au projet courant
 function ls(k) { return localStorage.getItem('kzo_' + (currentProjectId||'default') + '_' + k); }
@@ -953,20 +1116,32 @@ function lsAllProjectKeys(projId) {
   return ['prop','bnqData','narr','pageData','results','driveFileId'].map(k => 'kzo_' + projId + '_' + k);
 }
 
-function saveToStorage() {
+async function saveToStorage() {
   try {
+    // Copie sans les grands blobs pour localStorage
+    const pdCopy = JSON.parse(JSON.stringify(pageData));
+
+    const cover = (pdCopy['garde'] || {}).coverPhoto;
+    if (cover) { await idbSaveBlob('coverPhoto', cover); delete pdCopy['garde'].coverPhoto; }
+
+    const sigClient = (pdCopy['signatures'] || {}).client;
+    if (sigClient) { await idbSaveBlob('sig_client', sigClient); delete pdCopy['signatures'].client; }
+
+    const sigInspector = (pdCopy['signatures'] || {}).inspector;
+    if (sigInspector) { await idbSaveBlob('sig_inspector', sigInspector); delete pdCopy['signatures'].inspector; }
+
     ls_set('prop', JSON.stringify(prop));
     ls_set('bnqData', JSON.stringify(bnqData));
     ls_set('narr', JSON.stringify(sectionNarratifs));
-    ls_set('pageData', JSON.stringify(pageData));
+    ls_set('pageData', JSON.stringify(pdCopy));
     ls_set('results', JSON.stringify(results));
     if (driveFileId) ls_set('driveFileId', driveFileId);
     showSaveInd('saved');
     scheduleDriveSync();
-  } catch(e) { console.error('Save error', e); }
+  } catch(e) { console.error('Save error', e); showSaveInd('error'); }
 }
 
-function loadFromStorage() {
+async function loadFromStorage() {
   try {
     prop            = JSON.parse(ls('prop')    || '{}');
     bnqData         = JSON.parse(ls('bnqData') || '{}');
@@ -974,6 +1149,31 @@ function loadFromStorage() {
     pageData        = JSON.parse(ls('pageData')|| '{}');
     results         = JSON.parse(ls('results') || '{}');
     driveFileId     = ls('driveFileId') || null;
+
+    // Restaurer grands blobs depuis IDB (+ migration ancien format)
+    const cover = await idbGetBlob('coverPhoto');
+    if (cover) {
+      pageData['garde'] = pageData['garde'] || {};
+      pageData['garde'].coverPhoto = cover;
+    } else if ((pageData['garde'] || {}).coverPhoto) {
+      await idbSaveBlob('coverPhoto', pageData['garde'].coverPhoto);
+    }
+
+    const sigClient = await idbGetBlob('sig_client');
+    if (sigClient) {
+      pageData['signatures'] = pageData['signatures'] || {};
+      pageData['signatures'].client = sigClient;
+    } else if ((pageData['signatures'] || {}).client) {
+      await idbSaveBlob('sig_client', pageData['signatures'].client);
+    }
+
+    const sigInspector = await idbGetBlob('sig_inspector');
+    if (sigInspector) {
+      pageData['signatures'] = pageData['signatures'] || {};
+      pageData['signatures'].inspector = sigInspector;
+    } else if ((pageData['signatures'] || {}).inspector) {
+      await idbSaveBlob('sig_inspector', pageData['signatures'].inspector);
+    }
   } catch(e) { console.error('Load error', e); }
 }
 
@@ -987,7 +1187,10 @@ function getSettings() {
     fontFamily:   g('fontFamily')   || 'Arial,Helvetica,sans-serif',
     fontSize:     g('fontSize')     || '11pt',
     accentColor:  g('accentColor')  || '#1a3c5e',
-    inspectorSig: g('inspectorSig') || '',  // signature réutilisable
+    inspectorSig: g('inspectorSig') || '',
+    tpsNo:        g('tpsNo')        || '',
+    tvqNo:        g('tvqNo')        || '',
+    firmAddress:  g('firmAddress')  || '',
   };
 }
 
@@ -1130,7 +1333,7 @@ function renderFields(fields, sectionId) {
     }
     // text
     const v = getVal(f.id);
-    return `<div class="field-row"><div class="field-label">${f.label}</div><div class="field-ctrl"><input type="text" id="${f.id}" value="${v}" data-sid="${sectionId}"></div></div>`;
+    return `<div class="field-row"><div class="field-label">${f.label}</div><div class="field-ctrl"><input type="text" id="${f.id}" value="${escapeAttr(v)}" data-sid="${sectionId}"></div></div>`;
   }).join('');
 }
 
@@ -1198,9 +1401,9 @@ function renderPageGarde(main) {
 </div></div>
 <div class="card"><div class="card-header open"><span class="card-icon">ℹ️</span><span class="card-title">Titre et introduction</span><span class="card-chev">▼</span></div>
 <div class="card-body open">
-  <div class="fg"><label class="fl">Titre du rapport</label><input type="text" id="g-title" value="${d.title||'Rapport d\'inspection préachat'}"></div>
-  <div class="fg"><label class="fl">Sous-titre / mention légale</label><textarea id="g-subtitle" rows="2">${d.subtitle||'Inspection réalisée selon la norme BNQ 3009-500 et le REIBH 2024'}</textarea></div>
-  <div class="fg"><label class="fl">Mot d\'introduction</label><textarea id="g-intro" rows="4">${d.intro||''}</textarea></div>
+  <div class="fg"><label class="fl">Titre du rapport</label><input type="text" id="g-title" value="${escapeAttr(d.title||'Rapport d\'inspection préachat')}"></div>
+  <div class="fg"><label class="fl">Sous-titre / mention légale</label><textarea id="g-subtitle" rows="2">${escapeAttr(d.subtitle||'Inspection réalisée selon la norme BNQ 3009-500 et le REIBH 2024')}</textarea></div>
+  <div class="fg"><label class="fl">Mot d\'introduction</label><textarea id="g-intro" rows="4">${escapeAttr(d.intro||'')}</textarea></div>
 </div></div>`;
   // drop zone
   const dz = document.getElementById('dz-garde');
@@ -1238,7 +1441,13 @@ function renderCoverPreview() {
   const el = document.getElementById('cover-photo-preview');
   if (!el) return;
   const src = (pageData['garde'] || {}).coverPhoto;
-  el.innerHTML = src ? `<img src="${src}" style="max-width:100%;max-height:300px;border-radius:8px;margin-top:10px">` : '';
+  el.innerHTML = '';
+  if (src) {
+    const img = document.createElement('img');
+    img.style.cssText = 'max-width:100%;max-height:300px;border-radius:8px;margin-top:10px';
+    img.src = src;
+    el.appendChild(img);
+  }
 }
 
 // ── PAGE: PARTIES ─────────────────────────────────────────
@@ -1248,44 +1457,64 @@ function renderParties(main) {
 <div class="card"><div class="card-header open"><span class="card-icon">👷</span><span class="card-title">Inspecteur</span><span class="card-chev">▼</span></div>
 <div class="card-body open">
   <div class="g2">
-    <div class="fg"><label class="fl">Nom</label><input type="text" id="pp-iname" value="${prop.inspectorName||'Jean Eveillard Cazeau'}"></div>
-    <div class="fg"><label class="fl">Certification</label><input type="text" id="pp-icert" value="${prop.inspectorCert||'AIBQ / RBQ'}"></div>
-    <div class="fg"><label class="fl">Téléphone</label><input type="tel" id="pp-iphone" value="${prop.inspectorPhone||''}"></div>
-    <div class="fg"><label class="fl">Courriel</label><input type="email" id="pp-iemail" value="${prop.inspectorEmail||'kzoinspectpro@gmail.com'}"></div>
+    <div class="fg"><label class="fl">Nom</label><input type="text" id="pp-iname" value="${escapeAttr(prop.inspectorName||'Jean Eveillard Cazeau')}"></div>
+    <div class="fg"><label class="fl">Association / certification</label>
+      <select id="pp-iassoc">
+        <optgroup label="── Québec ──">
+          <option value="AIBQ" ${prop.inspectorAssoc === 'AIBQ' ? 'selected' : ''}>AIBQ — Association des Inspecteurs en Bâtiments du Québec</option>
+          <option value="AIIAQ" ${prop.inspectorAssoc === 'AIIAQ' ? 'selected' : ''}>AIIAQ — Association des Inspecteurs Immobiliers Agréés du Québec</option>
+          <option value="IBC" ${prop.inspectorAssoc === 'IBC' ? 'selected' : ''}>IBC — Inspecteurs en Bâtiments Certifiés du Québec</option>
+          <option value="OIQ" ${prop.inspectorAssoc === 'OIQ' ? 'selected' : ''}>OIQ — Ordre des Ingénieurs du Québec</option>
+          <option value="OAQ" ${prop.inspectorAssoc === 'OAQ' ? 'selected' : ''}>OAQ — Ordre des Architectes du Québec</option>
+          <option value="OTPQ" ${prop.inspectorAssoc === 'OTPQ' ? 'selected' : ''}>OTPQ — Ordre des Technologues Professionnels du Québec</option>
+        </optgroup>
+        <optgroup label="── International ──">
+          <option value="InterNACHI" ${prop.inspectorAssoc === 'InterNACHI' ? 'selected' : ''}>InterNACHI — Int. Assoc. of Certified Home Inspectors</option>
+        </optgroup>
+        <optgroup label="──────────────">
+          <option value="Autre" ${prop.inspectorAssoc === 'Autre' ? 'selected' : ''}>Autre / Indépendant</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">Titre professionnel</label><input type="text" id="pp-ititle" value="${escapeAttr(prop.inspectorTitle||'Inspecteur certifié AIBQ')}"></div>
+    <div class="fg"><label class="fl">No de certification</label><input type="text" id="pp-icert" value="${escapeAttr(prop.inspectorCert||'')}"></div>
+    <div class="fg"><label class="fl">Téléphone</label><input type="tel" id="pp-iphone" value="${escapeAttr(prop.inspectorPhone||'')}"></div>
+    <div class="fg"><label class="fl">Courriel</label><input type="email" id="pp-iemail" value="${escapeAttr(prop.inspectorEmail||'kzoinspectpro@gmail.com')}"></div>
   </div>
 </div></div>
 <div class="card"><div class="card-header open"><span class="card-icon">🏠</span><span class="card-title">Propriété</span><span class="card-chev">▼</span></div>
 <div class="card-body open">
   <div class="g2">
-    <div class="fg full"><label class="fl">Adresse</label><input type="text" id="pp-paddr" value="${prop.propAddress||''}"></div>
-    <div class="fg"><label class="fl">Date</label><input type="date" id="pp-date" value="${prop.dateInsp||''}"></div>
-    <div class="fg"><label class="fl">No dossier</label><input type="text" id="pp-doss" value="${prop.dossier||''}"></div>
-    <div class="fg"><label class="fl">Type bâtiment</label><input type="text" id="pp-type" value="${prop.typeBat||''}"></div>
-    <div class="fg"><label class="fl">Année construction</label><input type="text" id="pp-annee" value="${prop.annee||''}"></div>
+    <div class="fg full"><label class="fl">Adresse</label><input type="text" id="pp-paddr" value="${escapeAttr(prop.propAddress||'')}"></div>
+    <div class="fg"><label class="fl">Date</label><input type="date" id="pp-date" value="${escapeAttr(prop.dateInsp||'')}"></div>
+    <div class="fg"><label class="fl">No dossier</label><input type="text" id="pp-doss" value="${escapeAttr(prop.dossier||'')}"></div>
+    <div class="fg"><label class="fl">Type bâtiment</label><input type="text" id="pp-type" value="${escapeAttr(prop.typeBat||'')}"></div>
+    <div class="fg"><label class="fl">Année construction</label><input type="text" id="pp-annee" value="${escapeAttr(prop.annee||'')}"></div>
   </div>
 </div></div>
 <div class="card"><div class="card-header open"><span class="card-icon">👤</span><span class="card-title">Acheteur / Vendeur</span><span class="card-chev">▼</span></div>
 <div class="card-body open">
   <div class="g2">
-    <div class="fg"><label class="fl">Nom acheteur</label><input type="text" id="pp-cname" value="${prop.clientName||''}"></div>
-    <div class="fg"><label class="fl">Tél. acheteur</label><input type="tel" id="pp-cphone" value="${prop.clientPhone||''}"></div>
-    <div class="fg"><label class="fl">Nom vendeur</label><input type="text" id="pp-sname" value="${prop.sellerName||''}"></div>
-    <div class="fg"><label class="fl">Tél. vendeur</label><input type="tel" id="pp-sphone" value="${prop.sellerPhone||''}"></div>
+    <div class="fg"><label class="fl">Nom acheteur</label><input type="text" id="pp-cname" value="${escapeAttr(prop.clientName||'')}"></div>
+    <div class="fg"><label class="fl">Tél. acheteur</label><input type="tel" id="pp-cphone" value="${escapeAttr(prop.clientPhone||'')}"></div>
+    <div class="fg"><label class="fl">Nom vendeur</label><input type="text" id="pp-sname" value="${escapeAttr(prop.sellerName||'')}"></div>
+    <div class="fg"><label class="fl">Tél. vendeur</label><input type="tel" id="pp-sphone" value="${escapeAttr(prop.sellerPhone||'')}"></div>
   </div>
 </div></div>`;
   main.querySelectorAll('.card-header').forEach(h => {
     h.classList.add('open');
-    h.nextElementSibling.classList.add('open');
-    h.addEventListener('click', () => { h.classList.toggle('open'); h.nextElementSibling.classList.toggle('open'); });
+    if (h.nextElementSibling) h.nextElementSibling.classList.add('open');
+    h.addEventListener('click', () => { h.classList.toggle('open'); if (h.nextElementSibling) h.nextElementSibling.classList.toggle('open'); });
   });
   const PARTIES_PROP_MAP = {
     'pp-iname':'inspectorName','pp-ititle':'inspectorTitle','pp-icert':'inspectorCert',
     'pp-iphone':'inspectorPhone','pp-iemail':'inspectorEmail',
     'pp-doss':'dossier','pp-date':'dateInsp','pp-type':'typeBat','pp-annee':'annee',
     'pp-cname':'clientName','pp-cphone':'clientPhone',
-    'pp-sname':'sellerName','pp-sphone':'sellerPhone'
+    'pp-sname':'sellerName','pp-sphone':'sellerPhone',
+    'pp-iassoc':'inspectorAssoc'
   };
-  main.querySelectorAll('input,textarea').forEach(el => {
+  main.querySelectorAll('input,textarea,select').forEach(el => {
     el.addEventListener('change', () => {
       pageData['parties'] = pageData['parties']||{};
       pageData['parties'][el.id] = el.value;
@@ -1293,6 +1522,26 @@ function renderParties(main) {
       scheduleSave();
     });
   });
+  
+  const assocSelect = document.getElementById('pp-iassoc');
+  if (assocSelect) {
+    assocSelect.addEventListener('change', (e) => {
+      const assoc = e.target.value;
+      const d = ASSOC_DATA[assoc] || ASSOC_DATA['Autre'];
+      const titleInput = document.getElementById('pp-ititle');
+      const certInput  = document.getElementById('pp-icert');
+      titleInput.value = d.title;
+      certInput.placeholder = d.certPh;
+      certInput.value = '';
+      prop['inspectorAssoc'] = assoc;
+      prop['inspectorTitle'] = d.title;
+      prop['inspectorCert']  = '';
+      pageData['parties'] = pageData['parties']||{};
+      pageData['parties']['pp-ititle'] = d.title;
+      pageData['parties']['pp-icert']  = '';
+      scheduleSave();
+    });
+  }
 }
 
 // ── PAGE: DOCUMENTS ───────────────────────────────────────
@@ -1318,7 +1567,7 @@ function renderDocuments(main) {
   }).join('')}
   <div class="fg" style="margin-top:10px"><label class="fl">Autres limites</label><textarea id="lim_notes" rows="3">${d.lim_notes||''}</textarea></div>
 </div></div>`;
-  main.querySelectorAll('.card-header').forEach(h => { h.classList.add('open'); h.nextElementSibling.classList.add('open'); h.addEventListener('click',()=>{h.classList.toggle('open');h.nextElementSibling.classList.toggle('open');}); });
+  main.querySelectorAll('.card-header').forEach(h => { h.classList.add('open'); if (h.nextElementSibling) h.nextElementSibling.classList.add('open'); h.addEventListener('click',()=>{h.classList.toggle('open');if(h.nextElementSibling)h.nextElementSibling.classList.toggle('open');}); });
   main.querySelectorAll('input[type=checkbox],textarea').forEach(el => {
     el.addEventListener('change', () => { pageData['documents']=pageData['documents']||{}; pageData['documents'][el.id]=el.type==='checkbox'?el.checked:el.value; scheduleSave(); });
   });
@@ -1465,7 +1714,7 @@ function renderPhotoGrid(sectionId, photos) {
 <button class="photo-cov${p.isCover?' on':''}" data-pid="${p.id}" data-sid="${sectionId}" title="Photo principale du rapport">&#11088;</button>
 <button class="photo-del" data-pid="${p.id}" data-sid="${sectionId}">&#10005;</button>
 <div class="photo-cb">
-  <input class="photo-cap" type="text" placeholder="Légende / localisation..." value="${p.caption||''}" data-pid="${p.id}" data-sid="${sectionId}">
+  <input class="photo-cap" type="text" placeholder="Légende / localisation..." value="${escapeAttr(p.caption||'')}" data-pid="${p.id}" data-sid="${sectionId}">
   <div class="sev-row">
     <button class="sev-btn${sev==='mineur'?' sm':''}" data-sev="mineur" data-pid="${p.id}" data-sid="${sectionId}">Mineur</button>
     <button class="sev-btn${sev==='majeur'?' ma':''}" data-sev="majeur" data-pid="${p.id}" data-sid="${sectionId}">Majeur</button>
@@ -1514,8 +1763,10 @@ function renderPhotoGrid(sectionId, photos) {
   });
   grid.querySelectorAll('img').forEach(img => {
     img.addEventListener('click', () => {
-      document.getElementById('pv-img').src = img.src;
-      document.getElementById('pv').classList.add('open');
+      const pvImg = document.getElementById('pv-img');
+      const pv = document.getElementById('pv');
+      if (pvImg) pvImg.src = img.src;
+      if (pv) pv.classList.add('open');
     });
   });
   grid.querySelectorAll('.photo-ai-btn').forEach(btn => {
@@ -1904,7 +2155,7 @@ async function exportPDF(mode = 'print') {
   };
 
   // Invoice calc
-  const fee = parseFloat(prop.fee || '500');
+  const fee = parseFloat(prop.fee || '0');
   const tps = (fee * 0.05).toFixed(2);
   const tvq = (fee * 0.09975).toFixed(2);
   const total = (fee + parseFloat(tps) + parseFloat(tvq)).toFixed(2);
@@ -2016,7 +2267,7 @@ ${prop.inspectorPhone||''} | ${prop.inspectorEmail||'kzoinspectpro@gmail.com'}</
 <tr class="invoice-total"><td>TOTAL</td><td style="text-align:right">${total} $</td></tr>
 </tbody></table>
 <p style="margin-top:12pt;font-size:9.5pt;color:#555">Modalité de paiement: ${prop.feeMode||'—'}</p>
-<p style="font-size:9pt;color:#888;margin-top:8pt">No TPS: [XXXXXXXXX RT0001] | No TVQ: [XXXXXXXXX TQ0001]</p>
+<p style="font-size:9pt;color:#888;margin-top:8pt">No TPS: ${getSettings().tpsNo||'[XXXXXXXXX RT0001]'} | No TVQ: ${getSettings().tvqNo||'[XXXXXXXXX TQ0001]'}</p>
 </div>`;
 
   // ── SIGNATURES DATA (déclaration anticipée pour norme + mandat) ──
@@ -2221,7 +2472,10 @@ function openExportMenu() {
     <button id="em-json">&#8595; Exporter fichier JSON</button>
     <button id="em-import">&#8593; Importer fichier JSON</button>
     <div class="sep"></div>
-    <button id="em-drive">&#9729; Sauvegarder sur Drive</button>
+    <button id="em-invoice">&#129534; Générer facture PDF</button>
+    <div class="sep"></div>
+    <button id="em-drive">&#9729; Sauvegarder données sur Drive</button>
+    <button id="em-drive-report">&#128196; Sauvegarder rapport HTML sur Drive</button>
     <div class="sep"></div>
     <button id="em-email">&#9993; Envoyer au client par courriel</button>`;
   document.body.appendChild(menu);
@@ -2230,7 +2484,9 @@ function openExportMenu() {
   document.getElementById('em-print').addEventListener('click', () => { menu.remove(); exportPDF('print'); });
   document.getElementById('em-json').addEventListener('click', () => { menu.remove(); exportJSON(); });
   document.getElementById('em-import').addEventListener('click', () => { menu.remove(); document.getElementById('import-input').click(); });
+  document.getElementById('em-invoice').addEventListener('click', () => { menu.remove(); generateInvoice(); });
   document.getElementById('em-drive').addEventListener('click', () => { menu.remove(); saveToDrive(); });
+  document.getElementById('em-drive-report').addEventListener('click', () => { menu.remove(); saveReportToDrive(); });
   document.getElementById('em-email').addEventListener('click', () => { menu.remove(); sendReportByEmail(); });
 
   setTimeout(() => {
@@ -2391,24 +2647,32 @@ async function saveKzo(forcePicker = false) {
 
 // ── OUVRIR .kzo (natif Electron) ─────────────────────────
 async function openKzoNative() {
+  if (!window.electronAPI) {
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = '.kzo,.json';
+    inp.onchange = async () => { if (inp.files[0]) await importJSON(inp.files[0]); };
+    inp.click();
+    return;
+  }
   const filePath = await window.electronAPI.openKzoFile();
   if (!filePath) return;
   await openKzoFromPath(filePath);
 }
 
 async function openKzoFromPath(filePath) {
-  const res = await window.electronAPI.readFile(filePath);
+  const res = await window.electronAPI.readFileBuffer(filePath);
   if (!res.success) { toast('Erreur lecture: ' + res.error, 'er'); return; }
   try {
-    const data = JSON.parse(res.content);
+    const bytes = Uint8Array.from(atob(res.data), c => c.charCodeAt(0));
     const fileName = filePath.split(/[\\/]/).pop();
-    await importKzoData(data, fileName);
+    const file = new File([bytes], fileName);
+    await importJSON(file);
     addRecentFile(filePath, fileName);
     if (currentProjectId) {
       localStorage.setItem('kzo_' + currentProjectId + '_filePath', filePath);
     }
   } catch(e) {
-    toast('Fichier invalide: ' + e.message, 'er');
+    toast('Erreur ouverture: ' + e.message, 'er');
   }
 }
 
@@ -2515,6 +2779,154 @@ async function saveToDrive() {
   } catch(e) {
     toast('Erreur Drive: ' + e.message, 'er');
     showSaveInd('saved');
+  }
+}
+
+function generateInvoice() {
+  const s = getSettings();
+  const fee     = parseFloat(prop.fee || '0');
+  const tpsAmt  = (fee * 0.05).toFixed(2);
+  const tvqAmt  = (fee * 0.09975).toFixed(2);
+  const total   = (fee + parseFloat(tpsAmt) + parseFloat(tvqAmt)).toFixed(2);
+  const invoiceNo = prop.dossier || ('KZO-' + new Date().getFullYear() + '-001');
+  const dateInv   = prop.dateInsp ? new Date(prop.dateInsp).toLocaleDateString('fr-CA', {day:'numeric',month:'long',year:'numeric'}) : new Date().toLocaleDateString('fr-CA', {day:'numeric',month:'long',year:'numeric'});
+  const ac = s.accentColor || '#1a3c5e';
+
+  const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Facture ${invoiceNo}</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#222;padding:40px;max-width:800px;margin:auto}
+  .inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:36px;padding-bottom:18px;border-bottom:3px solid ${ac}}
+  .inv-brand{font-size:20pt;font-weight:700;color:${ac};letter-spacing:1px}
+  .inv-firm{font-size:9pt;color:#555;margin-top:4px;line-height:1.5}
+  .inv-title{font-size:22pt;font-weight:700;color:${ac};text-align:right}
+  .inv-no{font-size:10pt;color:#555;text-align:right;margin-top:4px}
+  .section{display:flex;gap:40px;margin-bottom:28px}
+  .section-block{flex:1}
+  .section-label{font-size:8pt;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+  .section-val{font-size:10.5pt;line-height:1.6}
+  table{width:100%;border-collapse:collapse;margin-bottom:12px}
+  th{background:${ac};color:#fff;padding:8px 12px;text-align:left;font-size:10pt}
+  th:last-child{text-align:right}
+  td{padding:7px 12px;border-bottom:1px solid #eee;font-size:10.5pt}
+  td:last-child{text-align:right}
+  .subtotal td{border-top:none;color:#555;font-size:10pt}
+  .total-row td{border-top:2px solid ${ac};font-weight:700;font-size:12pt;color:${ac}}
+  .footer{margin-top:32px;padding-top:14px;border-top:1px solid #ddd;font-size:8.5pt;color:#888;line-height:1.6}
+  .pay-box{background:#f7f8fa;border:1px solid #ddd;border-radius:6px;padding:14px 18px;margin-top:24px;font-size:10pt}
+  .pay-label{font-weight:700;margin-bottom:4px}
+  @media print{body{padding:20px}.no-print{display:none}}
+  .print-btn{background:${ac};color:#fff;border:none;padding:10px 22px;font-size:11pt;border-radius:5px;cursor:pointer;margin-bottom:28px}
+</style></head><body>
+<button class="print-btn no-print" onclick="window.print()">🖨️ Imprimer / Sauvegarder PDF</button>
+
+<div class="inv-header">
+  <div>
+    <div class="inv-brand">KZO InspectPro</div>
+    <div class="inv-firm">
+      ${prop.firmName || prop.inspectorName || 'Jean Eveillard Cazeau'}<br>
+      ${prop.inspectorCert || 'Inspecteur certifié AIBQ'}<br>
+      ${s.firmAddress || prop.inspectorCity || ''}<br>
+      ${prop.inspectorPhone || ''} &nbsp;|&nbsp; ${prop.inspectorEmail || 'kzoinspectpro@gmail.com'}
+    </div>
+  </div>
+  <div>
+    <div class="inv-title">FACTURE</div>
+    <div class="inv-no">No <strong>${invoiceNo}</strong><br>Date : ${dateInv}</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-block">
+    <div class="section-label">Facturé à</div>
+    <div class="section-val">
+      <strong>${prop.clientName || '—'}</strong><br>
+      ${prop.clientPhone ? prop.clientPhone + '<br>' : ''}
+      ${prop.clientEmail || ''}
+    </div>
+  </div>
+  <div class="section-block">
+    <div class="section-label">Propriété inspectée</div>
+    <div class="section-val">${prop.propAddress || '—'}</div>
+  </div>
+  <div class="section-block">
+    <div class="section-label">Dossier</div>
+    <div class="section-val">${prop.dossier || '—'}</div>
+  </div>
+</div>
+
+<table>
+  <thead><tr><th>Description du service</th><th>Montant</th></tr></thead>
+  <tbody>
+    <tr><td>Inspection préachat résidentielle — BNQ 3009-500/2022</td><td>${fee.toFixed(2)} $</td></tr>
+    <tr class="subtotal"><td>TPS (5 %)</td><td>${tpsAmt} $</td></tr>
+    <tr class="subtotal"><td>TVQ (9,975 %)</td><td>${tvqAmt} $</td></tr>
+    <tr class="total-row"><td>TOTAL DÛ</td><td>${total} $</td></tr>
+  </tbody>
+</table>
+
+${prop.feeMode ? `<div class="pay-box"><div class="pay-label">Mode de paiement</div>${prop.feeMode}</div>` : ''}
+
+<div class="footer">
+  ${s.tpsNo ? 'No TPS : ' + s.tpsNo + ' &nbsp;|&nbsp; ' : ''}
+  ${s.tvqNo ? 'No TVQ : ' + s.tvqNo : ''}
+  <br>Cette facture constitue un reçu officiel d'honoraires professionnels d'inspection en bâtiment.
+</div>
+</body></html>`;
+
+  const w = window.open('', '_blank', 'width=900,height=700');
+  if (!w) { toast('Autorisez les popups pour générer la facture', 'er'); return; }
+  w.document.write(html);
+  w.document.close();
+}
+
+async function saveReportToDrive() {
+  if (!driveToken) { const ok = await connectDrive(); if (!ok) return; }
+  toast('Génération du rapport...', 'inf', 60000);
+  try {
+    await exportPDF('_build_only');
+    const reportHtml = window._lastReportHtml || '';
+    if (!reportHtml) throw new Error('Rapport vide');
+
+    const date = new Date().toISOString().slice(0, 10);
+    const fileName = 'rapport-kzo-' + (prop.dossier || 'inspection') + '-' + date + '.html';
+    const blob = new Blob([reportHtml], { type: 'text/html' });
+
+    const existingId = ls('reportDriveFileId');
+    let fileId = existingId;
+
+    if (existingId) {
+      await fetch('https://www.googleapis.com/upload/drive/v3/files/' + existingId + '?uploadType=media', {
+        method: 'PATCH',
+        headers: { Authorization: 'Bearer ' + driveToken, 'Content-Type': 'text/html' },
+        body: blob
+      });
+    } else {
+      const meta = new Blob([JSON.stringify({ name: fileName, mimeType: 'text/html' })], { type: 'application/json' });
+      const form = new FormData();
+      form.append('metadata', meta);
+      form.append('file', blob);
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + driveToken },
+        body: form
+      });
+      const data = await res.json();
+      if (!data.id) throw new Error('Erreur création fichier Drive');
+      fileId = data.id;
+      ls_set('reportDriveFileId', fileId);
+      await fetch('https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + driveToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'reader', type: 'anyone' })
+      });
+    }
+
+    const link = 'https://drive.google.com/file/d/' + fileId + '/view';
+    try { await navigator.clipboard.writeText(link); } catch(e) {}
+    toast('&#128196; Rapport sauvegardé sur Drive — lien copié', 'ok', 8000);
+  } catch(e) {
+    toast('Erreur rapport Drive: ' + e.message, 'er');
   }
 }
 
@@ -2651,12 +3063,12 @@ function generateMandatPage() {
     '.badge-ok{background:#dcfce7;color:#166534}.badge-err{background:#fee2e2;color:#991b1b}' +
     '#status{text-align:center;margin-top:12px;font-weight:600;font-size:.95rem}</style></head><body>' +
     '<h1>&#128203; Mandat d\'inspection préachat</h1>' +
-    '<p class="sub">Dossier ' + dossier + ' — Veuillez lire et signer avant l\'inspection</p>' +
+    '<p class="sub">Dossier ' + escapeAttr(dossier) + ' — Veuillez lire et signer avant l\'inspection</p>' +
     '<div class="box"><h2>Parties</h2>' +
-    '<p><strong>Client :</strong> ' + clientName + '</p>' +
-    '<p><strong>Propriété :</strong> ' + propAddress + '</p>' +
-    '<p><strong>Date inspection :</strong> ' + dateInsp + '</p>' +
-    '<p><strong>Inspecteur :</strong> ' + inspName + ' — ' + inspCert + ' — ' + firmName + '</p></div>' +
+    '<p><strong>Client :</strong> ' + escapeAttr(clientName) + '</p>' +
+    '<p><strong>Propriété :</strong> ' + escapeAttr(propAddress) + '</p>' +
+    '<p><strong>Date inspection :</strong> ' + escapeAttr(dateInsp) + '</p>' +
+    '<p><strong>Inspecteur :</strong> ' + escapeAttr(inspName) + ' — ' + escapeAttr(inspCert) + ' — ' + escapeAttr(firmName) + '</p></div>' +
     '<div class="box"><h2>Norme de pratique — Résumé</h2>' +
     '<p>L\'inspection préachat est une évaluation <strong>visuelle, objective et non invasive</strong> des composantes accessibles du bâtiment, réalisée selon le REIBH 2024 et la norme BNQ 3009-500.</p>' +
     '<p>La responsabilité de l\'inspecteur est limitée aux honoraires d\'inspection en cas de faute dans l\'évaluation visuelle. Les vices cachés et composantes non accessibles sont exclus.</p>' +
@@ -2686,8 +3098,8 @@ function generateMandatPage() {
     'const sigData=canvas.toDataURL("image/png");' +
     'try{if("' + EMAILJS_KEY + '"==="YOUR_EMAILJS_PUBLIC_KEY"){document.getElementById("status").innerHTML=\'<span class="badge badge-err">EmailJS non configuré — contactez votre inspecteur</span>\';return;}emailjs.init("' + EMAILJS_KEY + '");' +
     'await emailjs.send("' + EMAILJS_SVC + '","' + EMAILJS_TPL + '",{' +
-    'dossier:"' + dossier + '",client:"' + clientName + '",address:"' + propAddress + '",' +
-    'date_inspection:"' + dateInsp + '",signature_data:sigData,signed_at:new Date().toLocaleString("fr-CA")});' +
+    'dossier:' + JSON.stringify(dossier) + ',client:' + JSON.stringify(clientName) + ',address:' + JSON.stringify(propAddress) + ',' +
+    'date_inspection:' + JSON.stringify(dateInsp) + ',signature_data:sigData,signed_at:new Date().toLocaleString("fr-CA")});' +
     'document.getElementById("status").innerHTML=\'<span class="badge badge-ok">✅ Signature envoyée — merci!</span>\';' +
     'document.querySelectorAll("button").forEach(b=>b.disabled=true);' +
     '}catch(e){document.getElementById("status").innerHTML=\'<span class="badge badge-err">Erreur: \'+e.text+\'</span>\';}}' +
@@ -2703,28 +3115,14 @@ async function sendMandatByEmail() {
 
   toast('Génération du mandat...', 'inf', 30000);
   const mandatHtml = generateMandatPage();
-  const mandatBlob = new Blob([mandatHtml], {type:'text/html;charset=utf-8'});
-  const mandatName = 'mandat-kzo-' + (prop.dossier || 'inspection') + '.html';
+  const inspCode = prop.dossier || 'inspection';
 
   try {
-    const meta = new Blob([JSON.stringify({name:mandatName,mimeType:'text/html',parents:[]})], {type:'application/json'});
-    const form = new FormData();
-    form.append('metadata', meta);
-    form.append('file', mandatBlob);
-    const uploadRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-      method:'POST', headers:{Authorization:'Bearer '+driveToken}, body:form
-    });
-    if (!uploadRes.ok) throw new Error('Drive upload ' + uploadRes.status);
-    const fileData = await uploadRes.json();
+    const fileData = await GoogleDrive.uploadContractHTML(currentProjectId, mandatHtml, prop.clientName, inspCode);
+    if (!fileData) throw new Error('Échec upload Drive');
+    
+    const mandatLink = fileData.url;
     const fileId = fileData.id;
-
-    const permRes = await fetch('https://www.googleapis.com/drive/v3/files/' + fileId + '/permissions', {
-      method:'POST',
-      headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},
-      body:JSON.stringify({role:'reader',type:'anyone'})
-    });
-    if (!permRes.ok) throw new Error('Drive permissions ' + permRes.status);
-    const mandatLink = 'https://drive.google.com/file/d/' + fileId + '/view';
 
     const subject = 'Veuillez signer votre mandat d\'inspection — ' + (prop.propAddress || 'KZO');
     const body = (prop.clientName || 'Madame, Monsieur') + ',\n\nVeuillez signer le mandat d\'inspection avant notre rendez-vous :\n\n' + mandatLink + '\n\nCela ne prend que 30 secondes sur votre téléphone.\n\nCordialement,\n' + (prop.inspectorName || 'Jean Eveillard Cazeau') + '\n' + (prop.firmName || 'KZO InspectPro');
@@ -2754,6 +3152,7 @@ async function sendMandatByEmail() {
     toast('✅ Mandat envoyé à ' + clientEmail, 'ok', 6000);
     closeModal('modal-mandat');
   } catch(e) {
+    const mandatBlob = new Blob([mandatHtml], {type:'text/html;charset=utf-8'});
     const blobUrl = URL.createObjectURL(mandatBlob);
     window.open(blobUrl);
     toast('Drive/Gmail indisponible — mandat ouvert localement. Enregistrez et envoyez manuellement.', 'warn', 7000);
@@ -2804,6 +3203,11 @@ function openSettings() {
   document.getElementById('s-font-family').value   = s.fontFamily;
   document.getElementById('s-font-size').value     = s.fontSize;
   document.getElementById('s-accent-color').value  = s.accentColor;
+  document.getElementById('s-tps-no').value        = s.tpsNo;
+  document.getElementById('s-tvq-no').value        = s.tvqNo;
+  document.getElementById('s-firm-address').value  = s.firmAddress;
+  document.getElementById('s-stripe-link').value   = s.stripeLink || '';
+  document.getElementById('s-interac-email').value = s.interacEmail || '';
 
   // Appliquer les valeurs du fournisseur actuel au chargement
   applyProviderDefaults(s.provider);
@@ -2823,6 +3227,11 @@ function saveSettingsFromModal() {
     fontFamily:   document.getElementById('s-font-family').value,
     fontSize:     document.getElementById('s-font-size').value,
     accentColor:  document.getElementById('s-accent-color').value,
+    tpsNo:        document.getElementById('s-tps-no').value,
+    tvqNo:        document.getElementById('s-tvq-no').value,
+    firmAddress:  document.getElementById('s-firm-address').value,
+    stripeLink:   document.getElementById('s-stripe-link').value,
+    interacEmail: document.getElementById('s-interac-email').value,
   });
   closeModal('modal-settings');
   toast('Paramètres enregistrés', 'ok');
@@ -2832,6 +3241,7 @@ function saveSettingsFromModal() {
 function openProfile() {
   const fields = {
     'p-inspector-name':prop.inspectorName||'Jean Eveillard Cazeau',
+    'p-inspector-assoc':prop.inspectorAssoc||'AIBQ',
     'p-inspector-title':prop.inspectorTitle||'Inspecteur certifié AIBQ',
     'p-inspector-cert':prop.inspectorCert||'AIBQ',
     'p-inspector-rbq':prop.inspectorRbq||'',
@@ -2862,7 +3272,7 @@ function openProfile() {
     'p-client-email':prop.clientEmail||'',
     'p-seller-name':prop.sellerName||'',
     'p-seller-phone':prop.sellerPhone||'',
-    'p-fee':prop.fee||'500',
+    'p-fee':prop.fee||'',
     'p-fee-mode':prop.feeMode||'',
   };
   Object.entries(fields).forEach(([id, val]) => {
@@ -2870,11 +3280,13 @@ function openProfile() {
     if (el) el.value = val;
   });
   openModal('modal-profile');
+  setTimeout(() => applyAssoc(prop.inspectorAssoc || 'AIBQ', true), 0);
 }
 
 function saveProfileFromModal() {
   prop = {
     inspectorName:  document.getElementById('p-inspector-name').value,
+    inspectorAssoc: document.getElementById('p-inspector-assoc').value,
     inspectorTitle: document.getElementById('p-inspector-title').value,
     inspectorCert:  document.getElementById('p-inspector-cert').value,
     inspectorRbq:   document.getElementById('p-inspector-rbq').value,
@@ -2940,7 +3352,8 @@ async function importJSON(file) {
       data = await readKzoZip(file);
     } else {
       const text = await file.text();
-      data = JSON.parse(text);
+      try { data = JSON.parse(text); }
+      catch(e) { throw new Error('Fichier .kzo invalide ou corrompu — JSON non parsable'); }
     }
 
     // Convertir automatiquement le format v1 (ancienne app)
@@ -3081,7 +3494,7 @@ function openNewProjectModal() {
   document.getElementById('np-dossier').value = autoGenDossier();
   document.getElementById('np-date').value = new Date().toISOString().slice(0, 10);
   document.getElementById('np-client').value = '';
-  document.getElementById('np-fee').value = '500';
+  document.getElementById('np-fee').value = '';
   openModal('modal-new-proj');
   setTimeout(() => document.getElementById('np-address').focus(), 100);
 }
@@ -3092,7 +3505,7 @@ function createNewProject() {
   const dossier  = document.getElementById('np-dossier').value.trim() || autoGenDossier();
   const date     = document.getElementById('np-date').value || new Date().toISOString().slice(0, 10);
   const client   = document.getElementById('np-client').value.trim();
-  const fee      = document.getElementById('np-fee').value || '500';
+  const fee      = document.getElementById('np-fee').value || '';
 
   const id = 'proj_' + Date.now();
   const projs = getProjectsList();
@@ -3107,7 +3520,7 @@ async function openProject(id, initialProp = null) {
   currentProjectId = id;
   driveFileId = null;
   prop = {}; bnqData = {}; sectionNarratifs = {}; pageData = {}; results = {};
-  loadFromStorage();
+  await loadFromStorage();
   if (initialProp) { Object.assign(prop, initialProp); saveToStorage(); }
   updateHeaderProjectName();
   updateDriveStatus(!!driveFileId);
@@ -3125,6 +3538,7 @@ async function deleteProject(id) {
   currentProjectId = id;
   const photos = await idbGetAllPhotos();
   for (const p of photos) await idbDeletePhoto(p.id);
+  await idbDeleteProjectBlobs(id);
   currentProjectId = saved;
   renderDashboard();
   toast('Inspection supprimée', 'inf');
@@ -3173,10 +3587,42 @@ function renderDashboard() {
   sidebar.querySelectorAll('[data-proj-quick]').forEach(el => {
     el.addEventListener('click', () => openProject(el.dataset.projQuick));
   });
+  
+  // -- Calcul des statistiques (30 derniers jours) --
+  const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  let recentCount = 0;
+  let totalRevenue = 0;
+  projs.forEach(p => {
+    if (p.ts > thirtyDaysAgo) recentCount++;
+    let fee = p.fee;
+    if (fee === undefined || fee === null) {
+      const propStr = localStorage.getItem('kzo_' + p.id + '_prop');
+      if (propStr) {
+        try { const prop = JSON.parse(propStr); fee = parseFloat(prop.fee) || 0; } catch(e){}
+      }
+    }
+    totalRevenue += parseFloat(fee) || 0;
+  });
 
   main.innerHTML = `<div class="dashboard">
 <div class="page-title">&#128203; Tableau de bord — KZO InspectPro Elite</div>
 <p class="page-normes">Gérez vos inspections. Chaque dossier est indépendant et stocké localement.</p>
+
+<!-- STATS DASHBOARD -->
+<div style="display:flex; gap:14px; margin-bottom:20px; flex-wrap:wrap;">
+  <div style="flex:1; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; min-width:200px;">
+    <div style="font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; font-weight:700;">Inspections (30 j.)</div>
+    <div style="font-size:28px; font-weight:bold; color:var(--text);">${recentCount}</div>
+  </div>
+  <div style="flex:1; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; min-width:200px;">
+    <div style="font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; font-weight:700;">Revenus Estimés (30 j.)</div>
+    <div style="font-size:28px; font-weight:bold; color:var(--ok);">$${totalRevenue.toFixed(2)}</div>
+  </div>
+  <div style="flex:1; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; min-width:200px;">
+    <div style="font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; font-weight:700;">Kilométrage</div>
+    <div style="font-size:28px; font-weight:bold; color:var(--accent);">-- km</div>
+  </div>
+</div>
 ${projs.length === 0 ? `<div style="margin-top:40px;text-align:center;padding:40px;background:var(--surface);border:2px dashed var(--border);border-radius:12px;max-width:480px">
   <div style="font-size:48px;margin-bottom:14px">&#128203;</div>
   <div style="font-size:17px;font-weight:700;margin-bottom:8px">Aucune inspection en cours</div>
@@ -3341,6 +3787,10 @@ function renderMandat(main) {
 <p>Le rapport est strictement confidentiel et destiné exclusivement au Client. Toute utilisation par un tiers non autorisé ne confère aucun droit de recours contre l'inspecteur ou son entreprise.</p>
 <h4>6. Recommandations de spécialistes</h4>
 <p>Toute déficience signalée peut nécessiter l'évaluation d'un professionnel qualifié (ingénieur structural, électricien maître, plombier agréé, évaluateur agréé, etc.). Les coûts estimatifs sont indicatifs uniquement et ne constituent pas des soumissions.</p>
+<h4>7. Conditions de paiement</h4>
+<p>Les honoraires d'inspection sont payables en totalité à la fin de l'inspection ou au plus tard à la réception du rapport. En cas de retard de paiement, des frais de retard de 2% par mois pourront s'appliquer. Le rapport demeure la propriété intellectuelle de l'inspecteur jusqu'au paiement complet.</p>
+<h4>8. Exclusions spécifiques</h4>
+<p>L'inspection ne couvre pas : l'amiante, le radon, la moisissure, la qualité de l'air, les sols contaminés, les champs d'épuration, les systèmes d'alarme, les antennes, la piscine et ses équipements, à moins d'une entente écrite spécifique.</p>
 </div>
 <div class="mandat-accept">
   <div class="chk-row">
@@ -3441,6 +3891,152 @@ function updateToolbarState(tb, el) {
   });
 }
 
+function generateInvoicePDF() {
+  if (!currentProjectId) { toast('Aucune inspection ouverte', 'er'); return; }
+  const s = getSettings();
+  
+  // Fill template
+  document.getElementById('inv-logo-img').src = KZO_LOGO;
+  document.getElementById('inv-firm-name').textContent = prop.firmName || 'KZO InspectPro';
+  document.getElementById('inv-firm-address').textContent = s.firmAddress || prop.inspectorAddress || '';
+  document.getElementById('inv-firm-phone').textContent = prop.firmPhone || prop.inspectorPhone || '';
+  document.getElementById('inv-firm-email').textContent = prop.firmEmail || prop.inspectorEmail || '';
+  document.getElementById('inv-tps-no').textContent = s.tpsNo || 'N/A';
+  document.getElementById('inv-tvq-no').textContent = s.tvqNo || 'N/A';
+
+  const dossier = prop.dossier || currentProjectId.slice(-6).toUpperCase();
+  document.getElementById('inv-no').textContent = 'F-' + dossier;
+  document.getElementById('inv-date').textContent = new Date().toLocaleDateString('fr-CA');
+  document.getElementById('inv-client-name').textContent = prop.clientName || 'Client';
+  document.getElementById('inv-client-address').textContent = prop.propAddress || '';
+  document.getElementById('inv-prop-address').textContent = (prop.propAddress + (prop.propCity ? ', ' + prop.propCity : '')).replace(/,\s*$/, '') || 'Adresse non spécifiée';
+
+  const fee = parseFloat(prop.fee) || 0;
+  const tps = fee * 0.05;
+  const tvq = fee * 0.09975;
+  const total = fee + tps + tvq;
+  
+  document.getElementById('inv-amount').textContent = fee.toFixed(2);
+  document.getElementById('inv-subtotal').textContent = fee.toFixed(2);
+  document.getElementById('inv-tps-amt').textContent = tps.toFixed(2);
+  document.getElementById('inv-tvq-amt').textContent = tvq.toFixed(2);
+  document.getElementById('inv-total').textContent = total.toFixed(2);
+  
+  // Payment details
+  document.getElementById('inv-interac-email').textContent = s.interacEmail || prop.firmEmail || prop.inspectorEmail || 'kzoinspectpro@gmail.com';
+  document.getElementById('inv-cheque-name').textContent = prop.firmName || 'KZO InspectPro';
+  
+  // QR Code for Stripe payment link
+  const stripeLink = s.stripeLink || '';
+  const qrContainer = document.getElementById('inv-qr-container');
+  const qrCanvas = document.getElementById('inv-qr-canvas');
+  if (stripeLink && typeof QRCode !== 'undefined') {
+    QRCode.toCanvas(qrCanvas, stripeLink, { width: 120, margin: 1, color: { dark: '#000', light: '#fff' } }, function(err) {
+      if (err) console.warn('QR error:', err);
+    });
+    qrContainer.style.display = 'block';
+  } else {
+    qrContainer.style.display = 'none';
+  }
+  
+  // Track payment status
+  const projs = getProjectsList();
+  const idx = projs.findIndex(p => p.id === currentProjectId);
+  if (idx >= 0 && !projs[idx].paymentStatus) {
+    projs[idx].paymentStatus = 'pending';
+    projs[idx].invoiceDate = new Date().toISOString();
+    projs[idx].invoiceTotal = total;
+    saveProjectsList(projs);
+  }
+  
+  // Print
+  const element = document.getElementById('invoice-template');
+  element.classList.add('print-mode');
+  
+  const opt = {
+    margin:       0.5,
+    filename:     'Facture_' + dossier + '.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(element).save().then(() => {
+    element.classList.remove('print-mode');
+    toast('Facture PDF générée ✅', 'ok');
+  }).catch(err => {
+    element.classList.remove('print-mode');
+    toast('Erreur PDF: ' + err.message, 'er');
+  });
+}
+
+// Email invoice to client via Gmail API (uses existing Drive OAuth)
+function emailInvoice() {
+  if (!currentProjectId) { toast('Aucune inspection ouverte', 'er'); return; }
+  const clientEmail = prop.clientEmail;
+  if (!clientEmail) { toast('Entrez le courriel du client dans la Page de garde', 'er'); return; }
+
+  const dossier = prop.dossier || currentProjectId.slice(-6).toUpperCase();
+  const fee = parseFloat(prop.fee) || 0;
+  const total = fee + fee*0.05 + fee*0.09975;
+  const s = getSettings();
+  const firmName = prop.firmName || 'KZO InspectPro';
+  const stripeLink = s.stripeLink || '';
+  const interacEmail = s.interacEmail || 'kzoinspectpro@gmail.com';
+  
+  const subject = `Facture F-${dossier} — ${firmName}`;
+  const body = `Bonjour,\n\nVeuillez trouver ci-dessous les détails de votre facture d'inspection :\n\nFacture : F-${dossier}\nMontant total (taxes incluses) : ${total.toFixed(2)} $\n\nModalités de paiement :\n• Virement Interac : ${interacEmail}\n${stripeLink ? '• Payer en ligne : ' + stripeLink + '\n' : ''}• Chèque : À l'ordre de ${firmName}\n\nMerci pour votre confiance.\n\nCordialement,\n${firmName}`;
+  
+  const mailtoLink = 'mailto:' + encodeURIComponent(clientEmail) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  window.open(mailtoLink, '_blank');
+  toast('Email de facturation ouvert', 'ok');
+}
+
+const ASSOC_DATA = {
+  'AIBQ':       { title:'Inspecteur certifié AIBQ',                    certLabel:'No de membre AIBQ',       certPh:'AIBQ-XXXX',      note:'Norme BNQ 3009-500/2022 — référence provinciale pour l\'inspection préachat résidentielle.' },
+  'AIIAQ':      { title:'Inspecteur Immobilier Agréé (IIA)',            certLabel:'No de membre AIIAQ',      certPh:'IIA-XXXX',       note:'Agrément québécois reconnu par l\'OACIQ et les institutions prêteuses.' },
+  'IBC':        { title:'Inspecteur en Bâtiments Certifié (IBC)',       certLabel:'No de membre IBC',        certPh:'IBC-XXXX',       note:'Réseau des Inspecteurs en Bâtiments Certifiés du Québec — formation et certification provinciales.' },
+  'OIQ':        { title:'Ingénieur — inspection en bâtiment',           certLabel:'No de membre OIQ',        certPh:'OIQ-XXXXX',      note:'Ordre professionnel du Québec — habilité à signer des rapports d\'expertise structurale.' },
+  'OAQ':        { title:'Architecte — inspection en bâtiment',          certLabel:'No de membre OAQ',        certPh:'OAQ-XXXXX',      note:'Ordre professionnel du Québec — inspection intégrée à la pratique architecturale.' },
+  'OTPQ':       { title:'Technologue professionnel en bâtiment (T.P.)', certLabel:'No de membre OTPQ',       certPh:'OTPQ-XXXXX',     note:'Ordre des Technologues Professionnels du Québec — spécialisation bâtiment.' },
+  'InterNACHI': { title:'Inspecteur Professionnel Certifié (CPI)',       certLabel:'No de membre InterNACHI', certPh:'NACHI-XXXXXXXX', note:'Plus grande association internationale d\'inspecteurs — certification CPI reconnue mondialement.' },
+  'Autre':      { title:'',                                              certLabel:'No de certification',     certPh:'',               note:'' },
+};
+
+const _knownTitles = () => Object.values(ASSOC_DATA).map(a => a.title).filter(Boolean);
+const _knownCertPh = () => Object.values(ASSOC_DATA).map(a => a.certPh).filter(Boolean);
+
+function escapeAttr(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function applyAssoc(assoc, fromLoad = false) {
+  const d = ASSOC_DATA[assoc] || ASSOC_DATA['Autre'];
+  const titleInput = document.getElementById('p-inspector-title');
+  const certInput  = document.getElementById('p-inspector-cert');
+  const certLabel  = document.getElementById('lbl-cert-no');
+  const badge      = document.getElementById('assoc-info-badge');
+  if (titleInput && (!titleInput.value || _knownTitles().includes(titleInput.value))) {
+    titleInput.value = d.title;
+  }
+  if (certInput) {
+    certInput.placeholder = d.certPh;
+    // Au changement manuel : vider si la valeur correspond à un format connu d'une autre asso
+    if (!fromLoad && _knownCertPh().includes(certInput.value)) {
+      certInput.value = '';
+    }
+  }
+  if (certLabel)  certLabel.textContent = d.certLabel;
+  if (badge) {
+    if (d.note) { badge.textContent = d.note; badge.style.display = 'block'; }
+    else          { badge.style.display = 'none'; }
+  }
+}
+
 function bindEvents() {
   // Header — logo : retour tableau de bord si projet ouvert, sinon page garde
   document.getElementById('btn-home').addEventListener('click', () => {
@@ -3474,9 +4070,22 @@ document.getElementById('agendaModal').addEventListener('click', (e) => {
 });
   document.getElementById('btn-settings').addEventListener('click', openSettings);
   document.getElementById('btn-profile').addEventListener('click', openProfile);
+  document.getElementById('btn-facture').addEventListener('click', generateInvoicePDF);
+  document.getElementById('btn-email-invoice').addEventListener('click', emailInvoice);
   document.getElementById('btn-report').addEventListener('click', () => exportPDF('print'));
   document.getElementById('btn-preview').addEventListener('click', previewReport);
   document.getElementById('btn-export-menu').addEventListener('click', openExportMenu);
+  
+  document.getElementById('btn-menu').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+  
+  // Auto-close sidebar on mobile when a nav item is clicked
+  document.getElementById('sidebar-nav').addEventListener('click', (e) => {
+    if (e.target.closest('.nav-item') && window.innerWidth <= 800) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+  });
   document.getElementById('btn-sidebar-export').addEventListener('click', exportJSON);
   document.getElementById('btn-sidebar-import').addEventListener('click', () => document.getElementById('import-input').click());
 
@@ -3485,6 +4094,11 @@ document.getElementById('agendaModal').addEventListener('click', (e) => {
 
   // Profile modal
   document.getElementById('btn-save-profile').addEventListener('click', saveProfileFromModal);
+  
+  // Association change listener
+  document.getElementById('p-inspector-assoc').addEventListener('change', (e) => {
+    applyAssoc(e.target.value);
+  });
 
   // AI chat
   document.getElementById('btn-ai-chat').addEventListener('click', () => openModal('modal-ai'));
@@ -3575,6 +4189,8 @@ document.getElementById('agendaModal').addEventListener('click', (e) => {
 // ── INIT ──────────────────────────────────────────────────
 async function init() {
   try {
+    const headerLogo = document.getElementById('hlogo-img');
+    if (headerLogo && typeof KZO_LOGO !== 'undefined') headerLogo.src = KZO_LOGO;
     await initIDB();
     bindEvents();
     initGoogleDrive();
@@ -3622,7 +4238,7 @@ const SECTION_SUBSEC_KEYS = {
   facades:     ['ss_st_2'],
   fenetres:    ['ss_in_3'],
   plomberie:   ['ss_pl_0','ss_pl_2'],
-  electricite: ['ss_el_1','ss_el_2'],
+  electricite: ['ss_el_0','ss_el_1','ss_el_2'],
   chauffage:   ['ss_cv_1','ss_cv_2'],
   isolation:   ['ss_da_1','ss_da_2','ss_da_3'],
   interieur:   ['ss_in_1','ss_cu_1','ss_cu_2'],
@@ -3743,7 +4359,9 @@ Réponds en JSON strict avec cette structure:
     }
     prog.style.display = 'none';
     _paiText = data.narratif || '';
-    result.innerHTML = `<strong>Défaut:</strong> ${data.defaut}<br><br><strong>Sévérité:</strong> <span style="color:${data.severite==='critique'?'var(--danger)':data.severite==='majeur'?'var(--warn)':'var(--ok)'}">${data.severite}</span><br><br><strong>Narratif:</strong><br>${data.narratif}<br><br><strong>Action recommandée:</strong><br>${data.action}`;
+    const _sev = ['critique','majeur','mineur','aucun'].includes(data.severite) ? data.severite : 'aucun';
+    const _sevColor = _sev==='critique'?'var(--danger)':_sev==='majeur'?'var(--warn)':'var(--ok)';
+    result.innerHTML = `<strong>Défaut:</strong> ${escapeAttr(data.defaut)}<br><br><strong>Sévérité:</strong> <span style="color:${_sevColor}">${escapeAttr(_sev)}</span><br><br><strong>Narratif:</strong><br>${escapeAttr(data.narratif||'').replace(/\n/g,'<br>')}<br><br><strong>Action recommandée:</strong><br>${escapeAttr(data.action||'').replace(/\n/g,'<br>')}`;
 
     // Auto-appliquer la sévérité sur la photo
     if (data.severite && data.severite !== 'aucun') {
@@ -3844,5 +4462,34 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 <script src="google_calendar.js"></script>
 <script src="agenda.js"></script>
+<script>
+// PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      console.log('[PWA] Service Worker enregistré, scope:', reg.scope);
+    }).catch(err => console.warn('[PWA] SW registration failed:', err));
+  });
+}
+
+// PWA Install Prompt
+let _deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _deferredInstallPrompt = e;
+  const installBtn = document.getElementById('pwa-install-btn');
+  if (installBtn) installBtn.style.display = 'inline-flex';
+});
+function pwaInstall() {
+  if (!_deferredInstallPrompt) { toast('Utilisez le menu du navigateur pour installer', 'inf'); return; }
+  _deferredInstallPrompt.prompt();
+  _deferredInstallPrompt.userChoice.then(c => {
+    if (c.outcome === 'accepted') toast('KZO installé sur votre appareil! 🎉', 'ok');
+    _deferredInstallPrompt = null;
+    const installBtn = document.getElementById('pwa-install-btn');
+    if (installBtn) installBtn.style.display = 'none';
+  });
+}
+</script>
 </body>
 </html>
