@@ -2750,6 +2750,8 @@ async function connectDrive() {
         driveToken = resp.access_token;
         updateDriveStatus(true);
         toast('Google Drive connecté', 'ok');
+        const rem = document.getElementById('drive-reminder');
+        if (rem) rem.remove();
         // Rapatrier automatiquement les inspections modifiées sur un autre appareil
         syncFromDrive();
         resolve(true);
