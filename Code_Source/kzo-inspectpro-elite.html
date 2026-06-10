@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="KZO Elite">
 <meta name="description" content="Application professionnelle d'inspection de bâtiments — REIBH 2024 / BNQ 3009-500">
 <style>
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3350;--text:#e8eaf6;--muted:#8891b4;--accent:#4f7cff;--accent2:#6b93ff;--ok:#22c55e;--warn:#f59e0b;--danger:#ef4444;--sw:280px;--hh:60px}
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3350;--text:#e8eaf6;--muted:#9aa3c7;--border2:#3d4368;--accent:#4f7cff;--accent2:#6b93ff;--ok:#22c55e;--warn:#f59e0b;--danger:#ef4444;--sw:280px;--hh:60px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;height:100vh;overflow:hidden}
 #app-header{position:fixed;top:0;left:0;right:0;height:var(--hh);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 14px;z-index:100}
@@ -25,7 +25,8 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(
 #drive-ind.drive-pending{color:#f59e0b;border-color:#f59e0b22;background:#f59e0b11}
 #drive-ind.drive-off{color:#8891b4;border-color:transparent;background:none}
 .hbtn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:5px;transition:background .15s;white-space:nowrap}
-.hbtn:hover{background:var(--border)}.hbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.hbtn.primary:hover{background:var(--accent2)}
+.hbtn:hover{background:var(--border)}
+.ic{width:14px;height:14px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.hbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.hbtn.primary:hover{background:var(--accent2)}
 #layout{display:flex;position:fixed;top:var(--hh);bottom:0;left:0;right:0}
 #sidebar{width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
 .stitle{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:11px 14px 4px}
@@ -51,7 +52,7 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(
 .field-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .field-label{font-size:12px;color:var(--muted);min-width:185px;padding-top:8px;flex-shrink:0}
 .field-label .fnote{display:block;font-size:10px;color:var(--warn);margin-top:2px}.field-ctrl{flex:1;min-width:175px}
-input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 9px;font-size:13px;font-family:inherit;transition:border-color .15s;-webkit-appearance:none}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:7px 9px;font-size:13px;font-family:inherit;transition:border-color .15s;-webkit-appearance:none}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 select{cursor:pointer}textarea{resize:vertical;min-height:76px}
 input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
@@ -237,19 +238,16 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
 <header id="app-header">
   <button class="hmenu-btn" id="btn-menu">&#9776;</button>
   <div class="hlogo" id="btn-home"><img id="hlogo-img" alt="KZO" style="height:35px; vertical-align:middle; margin-right:10px; border-radius:4px; display:inline-block;"> KZO <span>InspectPro Elite</span></div>
-  <button class="hbtn" id="btn-file-menu">&#128193; Fichier &#9660;</button>
+  <button class="hbtn" id="btn-file-menu"><svg class="ic" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Fichier &#9660;</button>
   <span id="proj-chip" style="display:none" title="Retour au tableau de bord">&#128193; </span>
   <div class="hsp"></div>
   <div id="save-ind">&#9679; Sauvegardé</div>
-  <div id="drive-ind" class="drive-off" title="Cliquer pour connecter Drive">&#9729; Drive</div>
-  <button class="hbtn" id="btn-agenda">&#128197; Agenda</button>
-  <button class="hbtn" id="btn-settings">&#9881; Paramètres</button>
-  <button class="hbtn" id="btn-profile">&#128196; Inspection</button>
-  <button class="hbtn" id="btn-preview">&#128065; Aperçu rapport</button>
-  <button class="hbtn" id="btn-export-menu">&#8595; Exporter</button>
-  <button class="hbtn" id="btn-facture">&#128181; Facture PDF</button>
-  <button class="hbtn" id="btn-email-invoice" style="background:linear-gradient(135deg,#059669,#0d9488);border-color:#059669;color:#fff">&#9993; Envoyer facture</button>
-  <button class="hbtn primary" id="btn-report">&#128438; Imprimer PDF</button>
+  <div id="drive-ind" class="drive-off" title="Cliquer pour connecter Drive"><svg class="ic" viewBox="0 0 24 24" style="vertical-align:-2px"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg> Drive</div>
+  <button class="hbtn" id="btn-agenda"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Agenda</button>
+  <button class="hbtn" id="btn-settings"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Paramètres</button>
+  <button class="hbtn" id="btn-profile"><svg class="ic" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil</button>
+  <button class="hbtn" id="btn-preview"><svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Aperçu rapport</button>
+  <button class="hbtn primary" id="btn-export-menu"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exporter &#9660;</button>
   <button class="hbtn" id="pwa-install-btn" onclick="pwaInstall()" style="display:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-color:#6366f1;color:#fff">&#128242; Installer l'app</button>
 </header>
 
@@ -259,12 +257,12 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
   <aside id="sidebar">
     <div class="snav" id="sidebar-nav"></div>
     <div class="sactions">
-      <button class="sabtn" id="btn-sidebar-export">&#8595; Exporter JSON</button>
-      <button class="sabtn" id="btn-sidebar-import">&#8593; Importer JSON</button>
+      <button class="sabtn" id="btn-sidebar-export"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exporter JSON</button>
+      <button class="sabtn" id="btn-sidebar-import"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Importer JSON</button>
       <div class="drive-info" id="drive-status">&#128274; Google Drive non connecté</div>
-      <button class="sabtn" id="btn-drive-connect">&#9729; Connecter Drive</button>
-      <button class="sabtn" id="btn-drive-save">&#8593; Sauvegarder sur Drive</button>
-      <button class="sabtn ac" id="btn-ai-chat">&#129302; Assistant IA</button>
+      <button class="sabtn" id="btn-drive-connect"><svg class="ic" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg> Connecter Drive</button>
+      <button class="sabtn" id="btn-drive-save"><svg class="ic" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg> Sauvegarder sur Drive</button>
+      <button class="sabtn ac" id="btn-ai-chat"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.7L19.6 10l-5.7 1.9L12 17.6l-1.9-5.7L4.4 10l5.7-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg> Assistant IA</button>
     </div>
   </aside>
 
@@ -563,7 +561,10 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:po
         <div class="fg"><label class="fl">Date d'inspection</label><input type="date" id="np-date"></div>
       </div>
       <div class="fg"><label class="fl">Nom du client</label><input type="text" id="np-client" placeholder="Prénom Nom"></div>
-      <div class="fg"><label class="fl">Honoraires ($, avant taxes)</label><input type="number" id="np-fee" placeholder="ex: 450" step="25"></div>
+      <div class="g2">
+        <div class="fg"><label class="fl">Honoraires ($, avant taxes)</label><input type="number" id="np-fee" placeholder="ex: 450" step="25"></div>
+        <div class="fg"><label class="fl">Kilométrage aller-retour (km)</label><input type="number" id="np-km" placeholder="ex: 60" step="1" min="0"></div>
+      </div>
     </div>
     <div class="mfooter">
       <button class="btn" data-close="modal-new-proj">Annuler</button>
@@ -1136,6 +1137,12 @@ async function saveToStorage() {
     ls_set('pageData', JSON.stringify(pdCopy));
     ls_set('results', JSON.stringify(results));
     if (driveFileId) ls_set('driveFileId', driveFileId);
+    // Horodater le projet pour la synchronisation multi-appareils
+    if (currentProjectId) {
+      const projs = getProjectsList();
+      const entry = projs.find(p => p.id === currentProjectId);
+      if (entry) { entry.updatedAt = Date.now(); saveProjectsList(projs); }
+    }
     showSaveInd('saved');
     scheduleDriveSync();
   } catch(e) { console.error('Save error', e); showSaveInd('error'); }
@@ -1423,7 +1430,10 @@ function renderPageGarde(main) {
   const sigs = pageData['signatures'] || {};
   const mandatBadge = sigs.clientSigned ? 'ms-signed' : (sigs.mandatSent ? 'ms-sent' : 'ms-pending');
   const mandatLabel = sigs.clientSigned ? '&#10003; Sign&#233;' : (sigs.mandatSent ? '&#128228; Envoy&#233; &#8212; en attente' : '&#9203; Non envoy&#233;');
-  mandatBtnDiv.innerHTML = '<button class="sabtn" id="btn-open-mandat" style="width:100%;background:var(--danger,#dc2626);color:#fff;border-color:var(--danger,#dc2626)">&#128203; Envoyer mandat pour signature <span class="mandat-status ' + mandatBadge + '" style="margin-left:auto">' + mandatLabel + '</span></button>';
+  const mandatStyle = sigs.clientSigned
+    ? 'background:rgba(34,197,94,.12);color:var(--ok,#22c55e);border-color:var(--ok,#22c55e)'
+    : 'background:rgba(245,158,11,.15);color:var(--warn,#f59e0b);border-color:var(--warn,#f59e0b)';
+  mandatBtnDiv.innerHTML = '<button class="sabtn" id="btn-open-mandat" style="width:100%;' + mandatStyle + '">&#128203; Envoyer mandat pour signature <span class="mandat-status ' + mandatBadge + '" style="margin-left:auto">' + mandatLabel + '</span></button>';
   main.appendChild(mandatBtnDiv);
   document.getElementById('btn-open-mandat').addEventListener('click', openMandatModal);
 }
@@ -2473,6 +2483,7 @@ function openExportMenu() {
     <button id="em-import">&#8593; Importer fichier JSON</button>
     <div class="sep"></div>
     <button id="em-invoice">&#129534; Générer facture PDF</button>
+    <button id="em-email-invoice">&#9993; Envoyer facture par courriel</button>
     <div class="sep"></div>
     <button id="em-drive">&#9729; Sauvegarder données sur Drive</button>
     <button id="em-drive-report">&#128196; Sauvegarder rapport HTML sur Drive</button>
@@ -2485,6 +2496,7 @@ function openExportMenu() {
   document.getElementById('em-json').addEventListener('click', () => { menu.remove(); exportJSON(); });
   document.getElementById('em-import').addEventListener('click', () => { menu.remove(); document.getElementById('import-input').click(); });
   document.getElementById('em-invoice').addEventListener('click', () => { menu.remove(); generateInvoice(); });
+  document.getElementById('em-email-invoice').addEventListener('click', () => { menu.remove(); emailInvoice(); });
   document.getElementById('em-drive').addEventListener('click', () => { menu.remove(); saveToDrive(); });
   document.getElementById('em-drive-report').addEventListener('click', () => { menu.remove(); saveReportToDrive(); });
   document.getElementById('em-email').addEventListener('click', () => { menu.remove(); sendReportByEmail(); });
@@ -2676,7 +2688,7 @@ async function openKzoFromPath(filePath) {
   }
 }
 
-async function importKzoData(data, fileName) {
+async function importKzoData(data, fileName, opts = {}) {
   // Créer un nouveau projet ou ouvrir l'existant
   const projId = data.projectId || ('proj_' + Date.now());
   const addr = (data.prop && data.prop.propAddress) || fileName || 'Inspection importée';
@@ -2684,18 +2696,24 @@ async function importKzoData(data, fileName) {
 
   // Créer l'entrée projet si elle n'existe pas
   const projs = getProjectsList();
-  if (!projs.find(p => p.id === projId)) {
-    projs.unshift({ id: projId, address: addr, dossier, date: (data.prop && data.prop.dateInsp) || '', status: 'en cours', createdAt: Date.now() });
-    saveProjectsList(projs);
+  const existing = projs.find(p => p.id === projId);
+  if (!existing) {
+    projs.unshift({ id: projId, address: addr, dossier, date: (data.prop && data.prop.dateInsp) || '', status: 'en cours', createdAt: Date.now(), updatedAt: opts.updatedAt || Date.now(), fee: (data.prop && data.prop.fee) || '', km: (data.prop && data.prop.km) || '' });
+  } else {
+    existing.address = addr; existing.dossier = dossier;
+    existing.updatedAt = opts.updatedAt || Date.now();
+    if (data.prop) { existing.fee = data.prop.fee || existing.fee; existing.km = data.prop.km || existing.km; }
   }
+  saveProjectsList(projs);
 
   // Charger les données dans le projet
   const lsPfx = 'kzo_' + projId + '_';
   if (data.prop)             localStorage.setItem(lsPfx + 'prop', JSON.stringify(data.prop));
   if (data.bnqData)          localStorage.setItem(lsPfx + 'bnqData', JSON.stringify(data.bnqData));
-  if (data.sectionNarratifs) localStorage.setItem(lsPfx + 'narratifs', JSON.stringify(data.sectionNarratifs));
+  if (data.sectionNarratifs) localStorage.setItem(lsPfx + 'narr', JSON.stringify(data.sectionNarratifs));
   if (data.pageData)         localStorage.setItem(lsPfx + 'pageData', JSON.stringify(data.pageData));
   if (data.results)          localStorage.setItem(lsPfx + 'results', JSON.stringify(data.results));
+  if (opts.driveFileId)      localStorage.setItem(lsPfx + 'driveFileId', opts.driveFileId);
 
   // Photos IDB
   if (data.photos) {
@@ -2708,8 +2726,10 @@ async function importKzoData(data, fileName) {
     }
   }
 
+  if (opts.open === false) return projId;
   toast('Fichier ouvert: ' + fileName, 'ok');
   await openProject(projId);
+  return projId;
 }
 
 // ── GOOGLE DRIVE ──────────────────────────────────────────
@@ -2730,11 +2750,65 @@ async function connectDrive() {
         driveToken = resp.access_token;
         updateDriveStatus(true);
         toast('Google Drive connecté', 'ok');
+        // Rapatrier automatiquement les inspections modifiées sur un autre appareil
+        syncFromDrive();
         resolve(true);
       }
     });
     client.requestAccessToken();
   });
+}
+
+// ── SYNC MULTI-APPAREILS (tablette ↔ ordinateur via Drive) ─
+async function driveListKzoFiles() {
+  const q = encodeURIComponent("name contains 'kzo-' and trashed=false");
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&pageSize=100`,
+    { headers: { Authorization: 'Bearer ' + driveToken } });
+  if (!res.ok) throw new Error('Drive list: ' + res.status);
+  return (await res.json()).files || [];
+}
+
+async function driveDownloadFile(fileId) {
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+    { headers: { Authorization: 'Bearer ' + driveToken } });
+  if (!res.ok) throw new Error('Drive download: ' + res.status);
+  return res.json();
+}
+
+let _driveSyncRunning = false;
+async function syncFromDrive() {
+  if (!driveToken || _driveSyncRunning) return;
+  _driveSyncRunning = true;
+  try {
+    const files = (await driveListKzoFiles()).filter(f => f.name.endsWith('.json'));
+    const projs = getProjectsList();
+    let pulled = 0;
+    for (const f of files) {
+      const remoteTime = new Date(f.modifiedTime).getTime();
+      // Retrouver le projet local lié à ce fichier Drive
+      const local = projs.find(p => localStorage.getItem('kzo_' + p.id + '_driveFileId') === f.id);
+      if (local) {
+        const localTime = local.updatedAt || local.createdAt || 0;
+        if (remoteTime <= localTime + 30000) continue; // local à jour (marge 30 s)
+      }
+      // Drive plus récent (modifié sur un autre appareil) ou dossier inconnu ici → rapatrier
+      try {
+        const data = await driveDownloadFile(f.id);
+        if (!data || data.app !== 'KZO InspectPro Elite') continue;
+        const projId = await importKzoData(data, f.name, { open: false, driveFileId: f.id, updatedAt: remoteTime });
+        if (projId === currentProjectId) await openProject(projId); // recharger si ouvert à l'écran
+        pulled++;
+      } catch (e) { console.warn('Sync Drive — fichier ignoré:', f.name, e); }
+    }
+    if (pulled > 0) {
+      toast(`${pulled} inspection${pulled > 1 ? 's' : ''} synchronisée${pulled > 1 ? 's' : ''} depuis Drive 🔄`, 'ok');
+      if (!currentProjectId && document.querySelector('.dashboard')) renderDashboard();
+    }
+  } catch (e) {
+    console.warn('Sync Drive échouée:', e);
+  } finally {
+    _driveSyncRunning = false;
+  }
 }
 
 function updateDriveStatus(connected) {
@@ -2751,6 +2825,7 @@ async function saveToDrive() {
     for (const sec of SECTIONS) allPhotos[sec.id] = await idbGetPhotos(sec.id);
     const payload = {
       version:3, exportedAt:new Date().toISOString(), app:'KZO InspectPro Elite',
+      projectId: currentProjectId,
       prop, bnqData, sectionNarratifs, pageData, results, photos:allPhotos
     };
     const blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
@@ -3495,6 +3570,7 @@ function openNewProjectModal() {
   document.getElementById('np-date').value = new Date().toISOString().slice(0, 10);
   document.getElementById('np-client').value = '';
   document.getElementById('np-fee').value = '';
+  document.getElementById('np-km').value = '';
   openModal('modal-new-proj');
   setTimeout(() => document.getElementById('np-address').focus(), 100);
 }
@@ -3506,14 +3582,15 @@ function createNewProject() {
   const date     = document.getElementById('np-date').value || new Date().toISOString().slice(0, 10);
   const client   = document.getElementById('np-client').value.trim();
   const fee      = document.getElementById('np-fee').value || '';
+  const km       = document.getElementById('np-km').value || '';
 
   const id = 'proj_' + Date.now();
   const projs = getProjectsList();
-  projs.unshift({ id, address, dossier, date, status: 'en cours', createdAt: Date.now() });
+  projs.unshift({ id, address, dossier, date, status: 'en cours', createdAt: Date.now(), fee, km });
   saveProjectsList(projs);
 
   closeModal('modal-new-proj');
-  openProject(id, { propAddress: address, dossier, dateInsp: date, clientName: client, fee });
+  openProject(id, { propAddress: address, dossier, dateInsp: date, clientName: client, fee, km });
 }
 
 async function openProject(id, initialProp = null) {
@@ -3592,21 +3669,37 @@ function renderDashboard() {
   const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
   let recentCount = 0;
   let totalRevenue = 0;
+  let totalKm = 0;
   projs.forEach(p => {
-    if (p.ts > thirtyDaysAgo) recentCount++;
-    let fee = p.fee;
-    if (fee === undefined || fee === null) {
+    const recent = (p.ts || p.createdAt || 0) > thirtyDaysAgo;
+    if (recent) recentCount++;
+    let fee = p.fee, km = p.km;
+    if (fee === undefined || fee === null || km === undefined || km === null) {
       const propStr = localStorage.getItem('kzo_' + p.id + '_prop');
       if (propStr) {
-        try { const prop = JSON.parse(propStr); fee = parseFloat(prop.fee) || 0; } catch(e){}
+        try {
+          const prop = JSON.parse(propStr);
+          if (fee === undefined || fee === null) fee = parseFloat(prop.fee) || 0;
+          if (km === undefined || km === null) km = parseFloat(prop.km) || 0;
+        } catch(e){}
       }
     }
     totalRevenue += parseFloat(fee) || 0;
+    if (recent) totalKm += parseFloat(km) || 0;
   });
 
   main.innerHTML = `<div class="dashboard">
 <div class="page-title">&#128203; Tableau de bord — KZO InspectPro Elite</div>
 <p class="page-normes">Gérez vos inspections. Chaque dossier est indépendant et stocké localement.</p>
+${(!driveToken && !localStorage.getItem('kzo_global_driveReminderOff')) ? `
+<div id="drive-reminder" style="display:flex; align-items:center; gap:12px; background:rgba(79,124,255,.08); border:1px solid var(--accent); border-radius:10px; padding:12px 16px; margin-bottom:18px;">
+  <svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px;color:var(--accent)"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+  <div style="flex:1; font-size:13px; line-height:1.4;">
+    <strong>Protégez vos dossiers :</strong> connectez Google Drive pour l'archivage automatique de chaque inspection. <span style="color:var(--muted)">Le REIBH exige la conservation des dossiers pendant 6 ans — une copie hors de ce PC est essentielle.</span>
+  </div>
+  <button class="hbtn primary" id="btn-reminder-drive" style="flex-shrink:0">Connecter Drive</button>
+  <button id="btn-reminder-close" title="Ne plus afficher" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px;flex-shrink:0">&#10005;</button>
+</div>` : ''}
 
 <!-- STATS DASHBOARD -->
 <div style="display:flex; gap:14px; margin-bottom:20px; flex-wrap:wrap;">
@@ -3615,14 +3708,24 @@ function renderDashboard() {
     <div style="font-size:28px; font-weight:bold; color:var(--text);">${recentCount}</div>
   </div>
   <div style="flex:1; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; min-width:200px;">
-    <div style="font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; font-weight:700;">Revenus Estimés (30 j.)</div>
-    <div style="font-size:28px; font-weight:bold; color:var(--ok);">$${totalRevenue.toFixed(2)}</div>
+    <div style="font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; font-weight:700;">Kilométrage (30 j.)</div>
+    <div style="font-size:28px; font-weight:bold; color:${totalKm > 0 ? 'var(--accent)' : 'var(--muted)'};">${totalKm > 0 ? totalKm.toFixed(0) + ' km' : '-- km'}</div>
   </div>
   <div style="flex:1; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; min-width:200px;">
-    <div style="font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; font-weight:700;">Kilométrage</div>
-    <div style="font-size:28px; font-weight:bold; color:var(--accent);">-- km</div>
+    <div style="font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; font-weight:700;">Stockage</div>
+    <div id="stat-storage" style="font-size:15px; font-weight:bold; color:var(--text); line-height:1.5;">Calcul…</div>
   </div>
 </div>
+
+<!-- REVENUS ESTIMÉS — section discrète repliable -->
+<details style="margin-bottom:20px;">
+  <summary style="cursor:pointer; font-size:12px; color:var(--muted); text-transform:uppercase; font-weight:700; letter-spacing:0.05em; list-style:none; display:flex; align-items:center; gap:6px; user-select:none;">
+    <span style="font-size:10px;">&#9654;</span> Revenus estimés (30 j.)
+  </summary>
+  <div style="margin-top:10px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; display:inline-block; min-width:200px;">
+    <div style="font-size:22px; font-weight:bold; color:var(--ok);">$${totalRevenue.toFixed(2)}</div>
+  </div>
+</details>
 ${projs.length === 0 ? `<div style="margin-top:40px;text-align:center;padding:40px;background:var(--surface);border:2px dashed var(--border);border-radius:12px;max-width:480px">
   <div style="font-size:48px;margin-bottom:14px">&#128203;</div>
   <div style="font-size:17px;font-weight:700;margin-bottom:8px">Aucune inspection en cours</div>
@@ -3647,6 +3750,15 @@ ${projs.length === 0 ? `<div style="margin-top:40px;text-align:center;padding:40
 </div>`;
 
   document.getElementById('btn-dash-new').addEventListener('click', openNewProjectModal);
+  updateStorageStats();
+
+  const remDrive = document.getElementById('btn-reminder-drive');
+  if (remDrive) remDrive.addEventListener('click', connectDrive);
+  const remClose = document.getElementById('btn-reminder-close');
+  if (remClose) remClose.addEventListener('click', () => {
+    localStorage.setItem('kzo_global_driveReminderOff', '1');
+    document.getElementById('drive-reminder').remove();
+  });
 
   main.querySelectorAll('.proj-card[data-projid]').forEach(card => {
     card.addEventListener('click', e => {
@@ -3660,6 +3772,32 @@ ${projs.length === 0 ? `<div style="margin-top:40px;text-align:center;padding:40
       showConfirm('Supprimer l\'inspection', 'Supprimer ce dossier et toutes ses photos? Cette action est irréversible.', () => deleteProject(btn.dataset.projdel));
     });
   });
+}
+
+// ── INDICATEUR DE STOCKAGE (dashboard) ────────────────────
+async function updateStorageStats() {
+  const el = document.getElementById('stat-storage');
+  if (!el) return;
+  // localStorage : textes des formulaires (limite ~10 Mo)
+  let lsBytes = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    lsBytes += (k.length + (localStorage.getItem(k) || '').length) * 2; // UTF-16
+  }
+  const lsMo = lsBytes / 1048576;
+  const lsPct = Math.min(100, Math.round(lsMo / 10 * 100));
+  const lsColor = lsPct > 80 ? 'var(--danger)' : lsPct > 60 ? 'var(--warn)' : 'var(--ok)';
+  let html = `<span style="color:${lsColor}">${lsMo.toFixed(1)} / 10 Mo</span> <span style="font-size:11px;color:var(--muted);font-weight:400">données</span>`;
+  // IndexedDB : photos (quota disque)
+  if (navigator.storage && navigator.storage.estimate) {
+    try {
+      const est = await navigator.storage.estimate();
+      const usedMo = (est.usage || 0) / 1048576;
+      const photosTxt = usedMo >= 1024 ? (usedMo / 1024).toFixed(1) + ' Go' : Math.round(usedMo) + ' Mo';
+      html += `<br><span style="color:var(--text)">${photosTxt}</span> <span style="font-size:11px;color:var(--muted);font-weight:400">photos (illimité)</span>`;
+    } catch (e) {}
+  }
+  el.innerHTML = html;
 }
 
 // ── MIGRATION v1 → v2 ─────────────────────────────────────
@@ -4070,9 +4208,6 @@ document.getElementById('agendaModal').addEventListener('click', (e) => {
 });
   document.getElementById('btn-settings').addEventListener('click', openSettings);
   document.getElementById('btn-profile').addEventListener('click', openProfile);
-  document.getElementById('btn-facture').addEventListener('click', generateInvoicePDF);
-  document.getElementById('btn-email-invoice').addEventListener('click', emailInvoice);
-  document.getElementById('btn-report').addEventListener('click', () => exportPDF('print'));
   document.getElementById('btn-preview').addEventListener('click', previewReport);
   document.getElementById('btn-export-menu').addEventListener('click', openExportMenu);
   
