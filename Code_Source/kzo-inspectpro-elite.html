@@ -4447,6 +4447,16 @@ function openLibrary(sectionId) {
 }
 
 // ── ANALYSE IA PAR PHOTO ───────────────────────────────────
+// Extrait le JSON d'une réponse IA, même entourée de clôtures markdown (```json ... ```)
+function parseAIJson(text) {
+  let t = String(text || '').trim();
+  const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fence) t = fence[1].trim();
+  const start = t.indexOf('{'), end = t.lastIndexOf('}');
+  if (start !== -1 && end > start) t = t.slice(start, end + 1);
+  return JSON.parse(t);
+}
+
 async function analysePhotoAI(photoId, sectionId) {
   _paiSectionId = sectionId;
   const modal = document.getElementById('modal-photo-ai');
@@ -4488,7 +4498,7 @@ Réponds en JSON strict avec cette structure:
       });
       if (!res.ok) throw new Error(`Anthropic ${res.status}`);
       const body = await res.json();
-      data = JSON.parse(body.content[0].text);
+      data = parseAIJson(body.content[0].text);
     } else {
       result.textContent = 'Analyse photo IA uniquement disponible avec Anthropic (Claude Vision).';
       prog.style.display = 'none';
