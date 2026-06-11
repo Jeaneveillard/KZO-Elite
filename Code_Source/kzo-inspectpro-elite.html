@@ -607,7 +607,7 @@ const POST_PAGES = [
 
 const PROVIDERS = {
   anthropic:{name:'Anthropic', chatModel:'claude-sonnet-4-20250514', visionModel:'claude-haiku-4-5-20251001', keyHint:'sk-ant-...'},
-  groq:     {name:'Groq',      chatModel:'llama-3.3-70b-versatile',  visionModel:'llama-4-scout-17b-16e-instruct', keyHint:'gsk_...'},
+  groq:     {name:'Groq',      chatModel:'llama-3.3-70b-versatile',  visionModel:'meta-llama/llama-4-scout-17b-16e-instruct', keyHint:'gsk_...'},
   gemini:   {name:'Gemini',    chatModel:'gemini-2.0-flash',         visionModel:'gemini-2.0-flash',               keyHint:'AIza...'},
   openai:   {name:'OpenAI',    chatModel:'gpt-4o-mini',              visionModel:'gpt-4o',                         keyHint:'sk-...'},
 };
@@ -4490,17 +4490,40 @@ Réponds en JSON strict avec cette structure:
 
   try {
     let data;
+    const b64 = photo.dataUrl.replace(/^data:image\/\w+;base64,/, '');
+    const visionModel = s.visionModel || PROVIDERS[s.provider].visionModel;
+
     if (s.provider === 'anthropic') {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {'content-type':'application/json','x-api-key':s.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body: JSON.stringify({model:s.visionModel||'claude-opus-4-5',max_tokens:800,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:photo.dataUrl.replace(/^data:image\/\w+;base64,/,'')}},{type:'text',text:prompt}]}]})
+        body: JSON.stringify({model:visionModel,max_tokens:800,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:prompt}]}]})
       });
       if (!res.ok) throw new Error(`Anthropic ${res.status}`);
       const body = await res.json();
       data = parseAIJson(body.content[0].text);
+    } else if (s.provider === 'openai' || s.provider === 'groq') {
+      // API compatible OpenAI (chat/completions) — image en data URL
+      const apiUrl = s.provider === 'openai' ? 'https://api.openai.com/v1/chat/completions' : 'https://api.groq.com/openai/v1/chat/completions';
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {'content-type':'application/json','Authorization':'Bearer '+s.apiKey},
+        body: JSON.stringify({model:visionModel,max_tokens:800,messages:[{role:'user',content:[{type:'image_url',image_url:{url:photo.dataUrl}},{type:'text',text:prompt}]}]})
+      });
+      if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(`${PROVIDERS[s.provider].name} ${res.status}: ${err.error?.message||res.statusText}`); }
+      const body = await res.json();
+      data = parseAIJson(body.choices?.[0]?.message?.content || '');
+    } else if (s.provider === 'gemini') {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${visionModel}:generateContent`, {
+        method: 'POST',
+        headers: {'content-type':'application/json','x-goog-api-key':s.apiKey},
+        body: JSON.stringify({contents:[{role:'user',parts:[{inline_data:{mime_type:'image/jpeg',data:b64}},{text:prompt}]}]})
+      });
+      if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(`Gemini ${res.status}: ${err.error?.message||res.statusText}`); }
+      const body = await res.json();
+      data = parseAIJson(body.candidates?.[0]?.content?.parts?.[0]?.text || '');
     } else {
-      result.textContent = 'Analyse photo IA uniquement disponible avec Anthropic (Claude Vision).';
+      result.textContent = 'Fournisseur IA non reconnu — vérifiez les Paramètres.';
       prog.style.display = 'none';
       return;
     }

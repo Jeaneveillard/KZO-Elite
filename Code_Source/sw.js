@@ -1,5 +1,5 @@
 // KZO InspectPro Elite — Service Worker (PWA Offline)
-const CACHE_NAME = 'kzo-elite-v3.3.2';
+const CACHE_NAME = 'kzo-elite-v3.3.3';
 const PRECACHE_URLS = [
   './',
   './kzo-inspectpro-elite.html',
